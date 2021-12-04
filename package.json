@@ -1,0 +1,24 @@
+{
+  "name": "lm-transport",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:server": "npm run dev --prefix server",
+    "dev": "npm run dev:server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/Ciskowski/lm-transport.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/Ciskowski/lm-transport/issues"
+  },
+  "homepage": "https://gitlab.com/Ciskowski/lm-transport#readme",
+  "dependencies": {
+    "fastify-jwt": "^4.0.1"
+  }
+}

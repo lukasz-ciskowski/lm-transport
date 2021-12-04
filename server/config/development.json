@@ -1,0 +1,17 @@
+{
+	"database": {
+		"server": "DESKTOP-57GDNQ3\\SQLEXPRESS",
+		"database": "LM-Transport",
+		"driver": "msnodesqlv8",
+		"options": { "trustedConnection": true }
+	},
+	"auth": {
+		"secret": "5oMah7blhf1GyEx",
+		"salt": "10",
+		"tokenExpiry": "30d"
+	},
+	"host": {
+		"address": "0.0.0.0",
+		"port": 8080
+	}
+}
