@@ -5,6 +5,7 @@ import { AuthService } from "../services/AuthService"
 
 export const ROUTE_OPTIONS: RouteShorthandOptions = {
 	schema: {
+		tags: ["auth"],
 		response: {
 			200: PassengerSchemas.UserSchema,
 		},

@@ -6,9 +6,10 @@ import ConfigService, { HostConfig } from "./ConfigService"
 import { errorHandler } from "../handlers/errorHandler"
 import jwtDecorator from "../decorators/jwtDecorator"
 import passwordDecorator from "../decorators/passwordDecorator"
+import auth from "../decorators/authDecorator"
 
 import passengerPlugin from "../plugins/passengerPlugin"
-import auth from "../decorators/authDecorator"
+import finePlugin from "../plugins/finesPlugin"
 
 export class WebService {
 	constructor(private readonly _instance: FastifyInstance) {}
@@ -37,7 +38,9 @@ export class WebService {
 		instance.register(
 			(i: FastifyInstance, _, next: (err?: FastifyError) => void) => {
 				instance.decorate("auth", auth(instance.jwt))
+
 				i.register(passengerPlugin)
+				i.register(finePlugin)
 				next()
 			},
 			{ prefix: "/api" }

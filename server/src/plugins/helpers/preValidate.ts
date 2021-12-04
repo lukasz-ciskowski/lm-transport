@@ -1,15 +1,9 @@
-import {
-	FastifyError,
-	FastifyInstance,
-	FastifyReply,
-	FastifyRequest,
-	RouteShorthandOptions,
-} from "fastify"
+import { FastifyInstance, FastifyReply, FastifyRequest, RouteShorthandOptions } from "fastify"
 import { RequestRouteOptions } from "../../../types/RouteOptions"
 
-type RouteProps<T> = RouteShorthandOptions | RequestRouteOptions<T>
-
-export function preValidate<T>(routeProps: RouteProps<T>) {
+export function preValidate<T extends RouteShorthandOptions | RequestRouteOptions<any>>(
+	routeProps: T
+) {
 	return {
 		...routeProps,
 		preValidation(

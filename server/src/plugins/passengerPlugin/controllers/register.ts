@@ -18,6 +18,7 @@ interface Request {
 
 export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
 	schema: {
+		tags: ["auth"],
 		body: Schemas.RegisterUser,
 		response: {
 			200: RequestSchemas.Response,
