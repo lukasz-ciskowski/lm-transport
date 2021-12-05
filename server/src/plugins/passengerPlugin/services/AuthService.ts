@@ -21,7 +21,13 @@ class Service {
 		const countLogins = await AuthRepository.countLogins(user.login)
 		if (countLogins.count !== 0) throw conflict("Login already taken")
 
-		return await AuthRepository.registerUser(user)
+		return await AuthRepository.createUser({
+			Login: user.login,
+			Password: user.password,
+			FirstName: user.first_name,
+			LastName: user.last_name,
+			CardNumber: user.card_number,
+		})
 	}
 }
 

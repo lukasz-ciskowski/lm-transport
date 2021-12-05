@@ -1,9 +1,8 @@
 import { BaseRepository } from "../../helpers/BaseRepository"
 import { Fine } from "../models/Fine"
-import { Fines } from "../models/Fines"
 
 class Repository extends BaseRepository {
-	public async getFine(id: number): Promise<{ fine: Fine | null }> {
+	public async getById(id: number): Promise<{ fine: Fine | null }> {
 		const response = await this.db.query`
             SELECT *
             FROM Fines
@@ -13,7 +12,7 @@ class Repository extends BaseRepository {
 		return { fine: response.recordset[0] }
 	}
 
-	public async getFines(passengerId: number, isPaid?: boolean): Promise<{ fines: Fines }> {
+	public async getAll(passengerId: number, isPaid?: boolean): Promise<{ fines: Array<Fine> }> {
 		let query = `
             SELECT *
             FROM Fines
@@ -22,8 +21,6 @@ class Repository extends BaseRepository {
 		if (isPaid !== undefined) {
 			query += ` AND IsPaid=@IsPaid`
 		}
-
-		console.log(query)
 
 		const response = await this.db
 			.request()
@@ -34,7 +31,7 @@ class Repository extends BaseRepository {
 		return { fines: response.recordset }
 	}
 
-	public async resolveFine(fine: Fine): Promise<{ id: number }> {
+	public async resolveOne(fine: Fine): Promise<{ id: number }> {
 		await this.db.query`
             UPDATE Fines
             SET IsPaid=1

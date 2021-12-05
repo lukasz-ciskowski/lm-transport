@@ -1,10 +1,21 @@
 import { notFound } from "@hapi/boom"
+import { Static, Type } from "@sinclair/typebox"
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import { RequestRouteOptions } from "../../../../types/RouteOptions"
 import { Passenger } from "../models/Passenger"
-import { LoginSchema, Schemas as LoginSchemas } from "../schemas/loginSchema"
-import { PassengerSchema, Schemas as PassengerSchemas } from "../schemas/passengerSchema"
+import { PassengerSchema, Schemas as PassengerSchemas } from "../schemas/loginResultSchema"
+import { SharedSchemas } from "../schemas/shared"
 import { AuthService } from "../services/AuthService"
+
+export module Schemas {
+	export const LoginUser = Type.Object({
+		login: SharedSchemas.Login,
+		password: SharedSchemas.Password,
+	})
+}
+
+export type LoginSchema = Static<typeof Schemas.LoginUser>
+
 
 interface Request {
 	Body: LoginSchema
@@ -13,9 +24,9 @@ interface Request {
 export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
 	schema: {
 		tags: ["auth"],
-		body: LoginSchemas.LoginUser,
+		body: Schemas.LoginUser,
 		response: {
-			200: PassengerSchemas.UserSchema,
+			200: PassengerSchemas.PassengerSchema,
 		},
 	},
 }

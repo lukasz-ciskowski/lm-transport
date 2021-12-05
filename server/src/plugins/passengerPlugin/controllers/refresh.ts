@@ -1,13 +1,13 @@
 import { FastifyInstance, FastifyReply, FastifyRequest, RouteShorthandOptions } from "fastify"
 import { Passenger } from "../models/Passenger"
-import { PassengerSchema, Schemas as PassengerSchemas } from "../schemas/passengerSchema"
+import { PassengerSchema, Schemas as PassengerSchemas } from "../schemas/loginResultSchema"
 import { AuthService } from "../services/AuthService"
 
 export const ROUTE_OPTIONS: RouteShorthandOptions = {
 	schema: {
 		tags: ["auth"],
 		response: {
-			200: PassengerSchemas.UserSchema,
+			200: PassengerSchemas.PassengerSchema,
 		},
 	},
 }

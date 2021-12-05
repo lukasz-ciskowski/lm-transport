@@ -2,7 +2,7 @@ import { Static, Type } from "@sinclair/typebox"
 import { SharedSchemas } from "./shared"
 
 export module Schemas {
-	export const UserSchema = Type.Object({
+	export const PassengerSchema = Type.Object({
 		login: SharedSchemas.Login,
 		first_name: SharedSchemas.FirstName,
 		last_name: SharedSchemas.LastName,
@@ -10,4 +10,4 @@ export module Schemas {
 	})
 }
 
-export type PassengerSchema = Static<typeof Schemas.UserSchema>
+export type PassengerSchema = Static<typeof Schemas.PassengerSchema>

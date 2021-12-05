@@ -21,7 +21,7 @@ export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
 		tags: ["auth"],
 		body: Schemas.RegisterUser,
 		response: {
-			200: RequestSchemas.Response,
+			201: RequestSchemas.Response,
 		},
 	},
 }
@@ -35,5 +35,5 @@ export async function register(
 	const hashedPassword = await this.password(password).hash()
 	await AuthService.register({ login, password: hashedPassword, first_name, last_name, card_number })
 
-	res.code(200).send({ ok: true })
+	res.code(201).send({ ok: true })
 }

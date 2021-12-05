@@ -10,6 +10,8 @@ import auth from "../decorators/authDecorator"
 
 import passengerPlugin from "../plugins/passengerPlugin"
 import finePlugin from "../plugins/finesPlugin"
+import ticketsPlugin from "../plugins/ticketsPlugin"
+import busLinesPlugin from "../plugins/busLinesPlugin"
 
 export class WebService {
 	constructor(private readonly _instance: FastifyInstance) {}
@@ -41,6 +43,8 @@ export class WebService {
 
 				i.register(passengerPlugin)
 				i.register(finePlugin)
+				i.register(ticketsPlugin)
+				i.register(busLinesPlugin)
 				next()
 			},
 			{ prefix: "/api" }

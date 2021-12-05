@@ -1,6 +1,5 @@
 import { BaseRepository } from "../../helpers/BaseRepository"
 import { Passenger } from "../models/Passenger"
-import { RegisterSchema } from "../schemas/registerSchema"
 
 class Repository extends BaseRepository {
 	public async countLogins(login: string): Promise<{ count: number }> {
@@ -13,12 +12,12 @@ class Repository extends BaseRepository {
 		return { count: response.recordset[0].Count }
 	}
 
-	public async registerUser(user: RegisterSchema): Promise<{ id: number }> {
+	public async createUser(user: Omit<Passenger, "Id">): Promise<{ id: number }> {
 		const response = await this.db.query`
             INSERT INTO Passengers 
             OUTPUT inserted.Id
             VALUES 
-            (${user.login}, ${user.password}, ${user.first_name}, ${user.last_name}, ${user.card_number})
+            (${user.Login}, ${user.Password}, ${user.FirstName}, ${user.LastName}, ${user.CardNumber})
         `
 
 		return { id: response.recordset[0].Id }
@@ -33,7 +32,7 @@ class Repository extends BaseRepository {
 		return { passenger: response.recordset[0] }
 	}
 
-    public async getById(id: number): Promise<{ passenger: Passenger | null }> {
+	public async getById(id: number): Promise<{ passenger: Passenger | null }> {
 		const response = await this.db.query`
             SELECT * FROM Passengers
             WHERE Id=${id}

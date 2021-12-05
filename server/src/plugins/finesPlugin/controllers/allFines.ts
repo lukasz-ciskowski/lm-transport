@@ -1,20 +1,27 @@
 import { Static, Type } from "@sinclair/typebox"
 import { FastifyReply, FastifyRequest } from "fastify"
 import { RequestRouteOptions } from "../../../../types/RouteOptions"
-import { Fines } from "../models/Fines"
-import { FinesSchema, Schemas } from "../schemas/finesSchema"
+import { Fine } from "../models/Fine"
 import { FineService } from "../services/FineService"
 
 module RequestSchemas {
 	export const Querystring = Type.Object({
 		is_paid: Type.Optional(Type.Boolean()),
 	})
+	export const Fines = Type.Array(
+		Type.Object({
+			id: Type.Integer(),
+			date: Type.String({ format: "date-time" }),
+			is_paid: Type.Boolean(),
+		})
+	)
 	export const Response = Type.Object({
-		fines: Schemas.Fines
+		fines: Fines,
 	})
 }
 
 export type Query = Static<typeof RequestSchemas.Querystring>
+export type FinesSchema = Static<typeof RequestSchemas.Fines>
 
 interface Request {
 	Querystring: Query
@@ -39,7 +46,7 @@ export async function allFines(req: FastifyRequest<Request>, res: FastifyReply) 
 	res.code(200).send({ fines: result.map(adapt) })
 }
 
-function adapt(fine: Fines[number]): FinesSchema[number] {
+function adapt(fine: Fine): FinesSchema[number] {
 	return {
 		id: fine.Id,
 		date: fine.Date,
