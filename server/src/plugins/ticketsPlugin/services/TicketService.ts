@@ -1,3 +1,4 @@
+import { notFound, unauthorized } from "@hapi/boom"
 import { PagingRequest } from "../../../../types/Paging"
 import { BusLine } from "../../busLinesPlugin/models/BusLine"
 import { Passenger } from "../../passengerPlugin/models/Passenger"
@@ -37,6 +38,13 @@ class Service {
 
 	async queryPassengerTickets(passenger: Passenger, page: PagingRequest, filters: Filters) {
 		return await TicketRepository.queryPassengerTickets(passenger.Id, page, filters.active)
+	}
+
+	async getSingleTicket(id: number, passengerId: number) {
+		const result = await TicketRepository.getPassengerTicket(id)
+		if (!result.ticket) throw notFound("Ticket not found")
+		if (result.ticket.PassengerId !== passengerId) throw notFound("Ticket not found")
+		return result.ticket
 	}
 }
 

@@ -1,4 +1,4 @@
-import { badRequest, notFound, unauthorized } from "@hapi/boom"
+import { badRequest, notFound } from "@hapi/boom"
 import { Fine } from "../models/Fine"
 import { FineRepository } from "../repositories/FineRepository"
 
@@ -11,7 +11,7 @@ class Service {
 	async getFine(id: number, passengerId: number) {
 		const result = await FineRepository.getById(id)
 		if (!result.fine) throw notFound("Fine not found")
-		if (result.fine.PassengerId !== passengerId) throw unauthorized("No access to this fine")
+		if (result.fine.PassengerId !== passengerId) throw notFound("Fine not found")
 
 		return result.fine
 	}

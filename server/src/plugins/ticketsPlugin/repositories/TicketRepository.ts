@@ -1,7 +1,7 @@
 import { PagingRequest, PagingResponse } from "../../../../types/Paging"
 import { BaseRepository } from "../../helpers/BaseRepository"
 import { parseDbToObject } from "../../helpers/dbObject"
-import { QueriedTicket, Ticket } from "../models/Ticket"
+import { QueriedTicket, SingleTicket, Ticket } from "../models/Ticket"
 
 class Repository extends BaseRepository {
 	public async createTicket(body: Omit<Ticket, "Id">): Promise<{ id: number }> {
@@ -52,11 +52,28 @@ class Repository extends BaseRepository {
 			.input("PassengerId", passengerId)
 			.query(totalQuery)
 
-		console.log(result.recordset.map(parseDbToObject))
-
 		return {
 			total: totalResult.recordset[0].Count,
 			rows: result.recordset.map(parseDbToObject),
+		}
+	}
+
+	public async getPassengerTicket(id: number): Promise<{ ticket: SingleTicket | null }> {
+		const result = await this.db.query`SELECT 
+			T.Id, T.StartDate, T.EstimatedEndDate, T.BoughtAt, T.CalculatedPrice,
+			BL.Id as 'BusLine.Id', BL.LineNumber as 'BusLine.LineNumber',
+			TT.Id as 'TicketType.Id', TT.Name as 'TicketType.Name', TT.Price as 'TicketType.Price', TT.Length as 'TicketType.Length',
+			T.PassengerId as 'PassengerId',
+			D.Id as 'Discount.Id', D.Name as 'Discount.Name', D.Percentage as 'Discount.Percentage'
+			FROM Tickets as T
+			LEFT JOIN BusLines BL ON BL.Id = BusLineId
+			LEFT JOIN TicketTypes TT ON TT.Id = TicketTypeId
+			LEFT JOIN Discounts D ON D.Id = DiscountId
+			WHERE T.Id=${id}
+		`
+
+		return {
+			ticket: parseDbToObject(result.recordset[0]),
 		}
 	}
 }

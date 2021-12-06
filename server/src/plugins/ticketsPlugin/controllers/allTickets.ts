@@ -6,7 +6,7 @@ import { AuthService } from "../../passengerPlugin/services/AuthService"
 import { Schemas as BusLineSchemas } from "../../busLinesPlugin/schemas/busLineSchema"
 import { SharedSchemas } from "../../helpers/sharedSchema"
 import { TicketService } from "../services/TicketService"
-import { QueriedTicket, Ticket } from "../models/Ticket"
+import { QueriedTicket } from "../models/Ticket"
 
 module RequestSchemas {
 	const Ticket = Type.Object({
@@ -42,7 +42,7 @@ export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
 	},
 }
 
-export async function tickets(req: FastifyRequest<Request>, res: FastifyReply) {
+export async function allTickets(req: FastifyRequest<Request>, res: FastifyReply) {
 	const { active, page, page_size } = req.query
 	const passengerId = req.authUser.id
 	const passengerObject = await AuthService.getById(passengerId)
