@@ -12,6 +12,7 @@ import passengerPlugin from "../plugins/passengerPlugin"
 import finePlugin from "../plugins/finesPlugin"
 import ticketsPlugin from "../plugins/ticketsPlugin"
 import busLinesPlugin from "../plugins/busLinesPlugin"
+import busPlugin from "../plugins/busPlugin"
 
 export class WebService {
 	constructor(private readonly _instance: FastifyInstance) {}
@@ -45,6 +46,7 @@ export class WebService {
 				i.register(finePlugin)
 				i.register(ticketsPlugin)
 				i.register(busLinesPlugin)
+				i.register(busPlugin)
 				next()
 			},
 			{ prefix: "/api" }
