@@ -13,6 +13,7 @@ import finePlugin from "../plugins/finesPlugin"
 import ticketsPlugin from "../plugins/ticketsPlugin"
 import busLinesPlugin from "../plugins/busLinesPlugin"
 import busPlugin from "../plugins/busPlugin"
+import timetablePlugin from "../plugins/timetablePlugin"
 
 export class WebService {
 	constructor(private readonly _instance: FastifyInstance) {}
@@ -43,6 +44,7 @@ export class WebService {
 				instance.decorate("auth", auth(instance.jwt))
 
 				i.register(passengerPlugin)
+				i.register(timetablePlugin)
 				i.register(finePlugin)
 				i.register(ticketsPlugin)
 				i.register(busLinesPlugin)
