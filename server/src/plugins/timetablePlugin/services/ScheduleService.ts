@@ -1,3 +1,4 @@
+import { notFound } from "@hapi/boom"
 import { CacheService } from "../../../services/CacheService"
 import { Schedule } from "../models/Schedule"
 import { ScheduleRepository } from "../repositories/ScheduleRepository"
@@ -15,10 +16,12 @@ class Service {
 			return result.schedules
 		})
 
-		return allSchedules.find(
+		const schedule = allSchedules.find(
 			(schedule) =>
 				schedule.WeekNumFrom <= weekdayNumber && schedule.WeekNumTo >= weekdayNumber
 		)
+		if (!schedule) throw notFound("Schedule not fount")
+		return schedule
 	}
 }
 
