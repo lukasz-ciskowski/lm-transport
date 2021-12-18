@@ -6,6 +6,11 @@ class Service {
 		const result = await ArrivalRepository.getByBusStop(busStopId, routeId, schedule.Id)
 		return result.arrivals
 	}
+
+	async getByRouteRun(routeRunId: number) {
+		const result = await ArrivalRepository.getByRouteRun(routeRunId)
+		return result.arrivals
+	}
 }
 
 export const ArrivalService = new Service()
