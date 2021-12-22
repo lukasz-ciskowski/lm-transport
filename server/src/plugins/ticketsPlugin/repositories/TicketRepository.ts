@@ -24,9 +24,10 @@ class Repository extends BaseRepository {
 		active?: boolean
 	): Promise<PagingResponse<Array<QueriedTicket>>> {
 		let query = `SELECT 
-            T.Id, T.StartDate, T.EstimatedEndDate, BL.Id as 'BusLine.Id', BL.LineNumber as 'BusLine.LineNumber'
+            T.Id, T.StartDate, T.EstimatedEndDate, BL.Id as 'BusLine.Id', BL.LineNumber as 'BusLine.LineNumber', TT.Name as 'TicketType'
             FROM Tickets as T
             LEFT JOIN BusLines BL ON BL.Id = BusLineId
+            LEFT JOIN TicketTypes TT ON TT.Id = TicketTypeId
         `
 		let where = ` WHERE PassengerId=@PassengerId`
 

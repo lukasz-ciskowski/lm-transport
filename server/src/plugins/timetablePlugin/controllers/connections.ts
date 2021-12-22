@@ -14,7 +14,7 @@ module RequestSchemas {
 	})
 
 	export const Response = Type.Object({
-		arrivals: Type.Array(
+		connections: Type.Array(
 			Type.Object({
 				id: Type.Number(),
 				route_run: Type.Object({
@@ -28,7 +28,8 @@ module RequestSchemas {
 		),
 	})
 	export const QueryString = Type.Object({
-		bus_stop: Type.Number(),
+		from_bus_stop: Type.Number(),
+        to_bus_stop: Type.Number(),
 		route: Type.Optional(Type.Number()),
 		show_past: Type.Optional(Type.Boolean()),
 		date: Type.String({ format: "date-time" }),
@@ -36,7 +37,7 @@ module RequestSchemas {
 }
 
 type QueryString = Static<typeof RequestSchemas.QueryString>
-type Response = Static<typeof RequestSchemas.Response>["arrivals"]
+type Response = Static<typeof RequestSchemas.Response>["connections"]
 
 export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
 	schema: {
@@ -52,17 +53,18 @@ interface Request {
 	Querystring: QueryString
 }
 
-export async function arrivals(req: FastifyRequest<Request>, res: FastifyReply) {
+export async function connections(req: FastifyRequest<Request>, res: FastifyReply) {
 	const dateObj = new Date(req.query.date)
 	const schedule = await ScheduleService.getScheduleByDay(dateObj)
-	const result = await ArrivalService.getByBusStop(
-		req.query.bus_stop,
+	const result = await ArrivalService.getByConnections(
+		req.query.from_bus_stop,
+        req.query.to_bus_stop,
 		schedule,
 		req.query.route,
 		dateObj
 	)
 
-	res.code(200).send({ arrivals: result.map(adapt) })
+	res.code(200).send({ connections: result.map(adapt) })
 }
 
 function adapt(result: ArrivalByBusStop): Response[number] {

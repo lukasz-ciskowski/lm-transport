@@ -5,18 +5,43 @@ import { ArrivalByBusStop, ArrivalByRouteRun } from "../models/Arrival"
 class Repository extends BaseRepository {
 	public async getByBusStop(
 		busStopId: number,
-		routeId: number,
-		scheduleId: number
+		scheduleId: number,
+		routeId?: number,
+		from?: string
 	): Promise<{ arrivals: ArrivalByBusStop[] }> {
-		const result = await this.db.query`
-            SELECT
-            A.Id, A.ArrivalTime, A.RouteRunId as 'RouteRun.Id'
+		let query = `
+			SELECT
+            A.Id, A.ArrivalTime, A.RouteRunId AS 'RouteRun.Id',
+			RS.FlowOrder as 'RouteSchema.FlowOrder',
+			BSS.Id AS 'RouteRun.Route.StartBusStop.Id', BSS.Name AS 'RouteRun.Route.StartBusStop.Name',
+            BSE.Id AS 'RouteRun.Route.EndBusStop.Id', BSE.Name AS 'RouteRun.Route.EndBusStop.Name',
+            R.Id AS 'RouteRun.Route.Id', BL.Id AS 'RouteRun.BusLine.Id', BL.Name AS 'RouteRun.BusLine.Name'
             FROM Arrivals AS A
 			LEFT JOIN RouteSchemas RS ON RS.Id=RouteSchemaId
 			LEFT JOIN RouteRuns RR ON RR.Id=RouteRunId
-            WHERE RR.ScheduleId=${scheduleId} AND RS.BusStopId=${busStopId} AND RS.RouteId=${routeId}
-            ORDER BY A.ArrivalTime
-        `
+			LEFT JOIN Routes R ON R.Id = RS.RouteId
+            LEFT JOIN BusStops BSS ON BSS.Id = R.StartBusStopId
+            LEFT JOIN BusStops BSE ON BSE.Id = R.EndBusStopId
+            LEFT JOIN BusLines BL ON BL.Id = R.BusLineId
+            WHERE RR.ScheduleId=@ScheduleId AND RS.BusStopId=@BusStopId
+		`
+
+		if (routeId) {
+			query += ` AND RS.RouteId=@RouteId`
+		}
+		if (from) {
+			query += ` AND A.ArrivalTime >= @ArrivalTime`
+		}
+
+		query += ` ORDER BY A.ArrivalTime`
+
+		const result = await this.db
+			.request()
+			.input("ScheduleId", scheduleId)
+			.input("BusStopId", busStopId)
+			.input("RouteId", routeId)
+			.input("ArrivalTime", from)
+			.query(query)
 
 		return { arrivals: result.recordset.map(parseDbToObject) }
 	}

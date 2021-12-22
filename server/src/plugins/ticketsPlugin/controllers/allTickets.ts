@@ -11,6 +11,7 @@ import { QueriedTicket } from "../models/Ticket"
 module RequestSchemas {
 	const Ticket = Type.Object({
 		id: Type.Number(),
+		ticket_type: Type.String(),
 		bus_line: BusLineSchemas.BusLine,
 		start_date: Type.String({ format: "date-time" }),
 		estimated_end_date: Type.String({ format: "date-time" }),
@@ -66,6 +67,7 @@ function adapt(result: QueriedTicket): TicketsSchema[number] {
 			id: result.BusLine.Id,
 			line_number: result.BusLine.LineNumber,
 		},
+		ticket_type: result.TicketType,
 		start_date: result.StartDate,
 		estimated_end_date: result.EstimatedEndDate,
 	}

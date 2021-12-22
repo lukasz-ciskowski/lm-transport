@@ -15,5 +15,11 @@ export interface Ticket {
 	BoughtAt: string
 }
 
-export type QueriedTicket = Omit<Ticket, "Passenger" | "Discount" | "CalculatedPrice" | "BoughtAt">
+export type QueriedTicket = {
+	Id: number
+	BusLine: BusLine
+	StartDate: string
+	EstimatedEndDate: string
+	TicketType: string
+}
 export type SingleTicket = Omit<Ticket, "Passenger"> & { PassengerId: number }

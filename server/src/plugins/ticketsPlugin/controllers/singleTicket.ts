@@ -1,13 +1,12 @@
 import { Static, Type } from "@sinclair/typebox"
 import { FastifyReply, FastifyRequest } from "fastify"
 import { RequestRouteOptions } from "../../../../types/RouteOptions"
-import { AuthService } from "../../passengerPlugin/services/AuthService"
 
 import { Schemas as BusLineSchemas } from "../../busLinesPlugin/schemas/busLineSchema"
 import { Schemas as TicketTypeSchemas } from "../schemas/ticketTypeSchema"
 import { Schemas as DiscountSchemas } from "../schemas/discountSchema"
 import { TicketService } from "../services/TicketService"
-import { QueriedTicket, SingleTicket } from "../models/Ticket"
+import { SingleTicket } from "../models/Ticket"
 
 module RequestSchemas {
 	export const Ticket = Type.Object({

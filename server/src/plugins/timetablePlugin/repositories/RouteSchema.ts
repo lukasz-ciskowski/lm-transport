@@ -22,15 +22,16 @@ class Repository extends BaseRepository {
         `
 		
 		if (params.busLine) {
-			query += ` WHERE R.BusLineId=@Param`
+			query += ` WHERE R.BusLineId=@BusLineId`
 		} else if (params.routeId) {
-			query += ` WHERE RS.RouteId=@Param`
+			query += ` WHERE RS.RouteId=@RouteId`
 		}
 		query += ` ORDER BY FlowOrder`
 		
 		const result = await this.db
 			.request()
-			.input("Param", params.busLine ?? params.routeId)
+			.input("BusLineId", params.busLine)
+			.input("RouteId", params.routeId)
 			.query(query)
 
 		return { schemas: result.recordset.map(parseDbToObject) }

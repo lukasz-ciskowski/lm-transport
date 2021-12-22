@@ -7,6 +7,6 @@ import { resolveFine, ROUTE_OPTIONS as RESOLVE_FINE_OPTIONS } from "./controller
 export default (instance: FastifyInstance, _: any, next: any) => {
 	instance.get("/fines", preValidate(ALL_FINES_OPTIONS), allFines)
 	instance.get("/fines/:id", preValidate(SINGLE_FINE_OPTIONS), singleFine)
-	instance.patch("/fines/:id/resolve", preValidate(RESOLVE_FINE_OPTIONS), resolveFine)
+	instance.patch("/fines/:id", preValidate(RESOLVE_FINE_OPTIONS), resolveFine)
 	next()
 }
