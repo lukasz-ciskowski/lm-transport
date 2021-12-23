@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    ports:
+      - 1433:1433
+    environment:
+      SA_PASSWORD: "Password123"
+      ACCEPT_EULA: "Y"
+
+  server:
+    command: "npm run dev"
+    build:
+      context: "."
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/home/node/server"
+      - /home/node/server/node_modules
+    ports:
+      - 8080:8080
+    environment: 
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - db

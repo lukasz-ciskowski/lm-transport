@@ -1,9 +1,10 @@
 {
 	"database": {
-		"server": "DESKTOP-57GDNQ3\\SQLEXPRESS",
+		"server": "db",
 		"database": "LM-Transport",
-		"driver": "msnodesqlv8",
-		"options": { "trustedConnection": true }
+		"user": "sa",
+		"password": "Password123",
+		"options": { "trustedConnection": true, "trustServerCertificate": true }
 	},
 	"auth": {
 		"secret": "5oMah7blhf1GyEx",

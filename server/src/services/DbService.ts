@@ -1,4 +1,4 @@
-import sql from "mssql/msnodesqlv8"
+import sql from "mssql"
 import ConfigService from "./ConfigService"
 
 export class DbService {
