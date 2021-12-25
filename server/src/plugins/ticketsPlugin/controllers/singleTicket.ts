@@ -3,8 +3,6 @@ import { FastifyReply, FastifyRequest } from "fastify"
 import { RequestRouteOptions } from "../../../../types/RouteOptions"
 
 import { Schemas as BusLineSchemas } from "../../busLinesPlugin/schemas/busLineSchema"
-import { Schemas as TicketTypeSchemas } from "../schemas/ticketTypeSchema"
-import { Schemas as DiscountSchemas } from "../schemas/discountSchema"
 import { TicketService } from "../services/TicketService"
 import { SingleTicket } from "../models/Ticket"
 
@@ -12,8 +10,16 @@ module RequestSchemas {
 	export const Ticket = Type.Object({
 		id: Type.Number(),
 		bus_line: BusLineSchemas.BusLine,
-		ticket_type: TicketTypeSchemas.TicketType,
-		discount: Type.Optional(DiscountSchemas.Discount),
+		ticket_type: Type.Object({
+			name: Type.String(),
+			price: Type.Number(),
+		}),
+		discount: Type.Optional(
+			Type.Object({
+				name: Type.String(),
+				percentage: Type.Number(),
+			})
+		),
 		calculated_price: Type.Number(),
 		start_date: Type.String({ format: "date-time" }),
 		estimated_end_date: Type.String({ format: "date-time" }),
@@ -59,14 +65,11 @@ function adapt(result: SingleTicket): TicketSchema {
 		},
 		discount: result.Discount
 			? {
-					id: result.Discount.Id,
 					name: result.Discount.Name,
 					percentage: result.Discount.Percentage,
 			  }
 			: undefined,
 		ticket_type: {
-			id: result.TicketType.Id,
-			length: result.TicketType.Length,
 			name: result.TicketType.Name,
 			price: result.TicketType.Price,
 		},

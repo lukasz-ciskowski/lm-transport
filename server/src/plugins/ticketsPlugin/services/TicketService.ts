@@ -1,10 +1,11 @@
-import { notFound, unauthorized } from "@hapi/boom"
+import { internal, notFound, unauthorized } from "@hapi/boom"
 import { PagingRequest } from "../../../../types/Paging"
 import { BusLine } from "../../busLinesPlugin/models/BusLine"
 import { Passenger } from "../../passengerPlugin/models/Passenger"
 import { Discount } from "../models/Discount"
 import { TicketType } from "../models/TicketType"
 import { TicketRepository } from "../repositories/TicketRepository"
+import moment from "moment"
 
 type Filters = { active?: boolean }
 class Service {
@@ -19,12 +20,27 @@ class Service {
 			? (ticketType.Price * discount.Percentage) / 100
 			: ticketType.Price
 
-		const endDate = new Date(startDate)
-		endDate.setHours(startDate.getHours() + ticketType.Length)
+		let estimatedStartDate: Date | null = null
+		let estimatedEndDate: Date | null = null
+
+		// for the "seasonal" tickets like monthly or weekly
+		if (ticketType.StaticDuration) {
+			estimatedStartDate = moment(startDate).startOf("D").toDate()
+			estimatedEndDate = moment(startDate)
+				.add(moment.duration(ticketType.StaticDuration))
+				.endOf("D")
+				.toDate()
+		} else {
+			// temporary solution - TODO calculate max length of single busline journey
+			estimatedStartDate = startDate
+			estimatedEndDate = moment(startDate).add(4, "h").toDate()
+		}
+
+		if (!estimatedStartDate || !estimatedEndDate) throw internal("Date parsing error")
 
 		const { id } = await TicketRepository.createTicket({
-			StartDate: startDate.toISOString(),
-			EstimatedEndDate: endDate.toISOString(),
+			StartDate: estimatedStartDate.toISOString(),
+			EstimatedEndDate: estimatedEndDate.toISOString(),
 			CalculatedPrice: Number(calculatedPrice.toFixed(2)),
 			Passenger: passenger,
 			BusLine: busLine,

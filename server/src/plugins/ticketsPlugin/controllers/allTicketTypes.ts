@@ -29,6 +29,6 @@ function adapt(type: TicketType): TicketTypeSchema {
 		id: type.Id,
 		name: type.Name,
 		price: type.Price,
-		length: type.Length,
+		static_duration: type.StaticDuration,
 	}
 }

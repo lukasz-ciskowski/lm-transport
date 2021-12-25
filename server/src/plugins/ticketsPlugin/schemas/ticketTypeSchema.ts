@@ -5,7 +5,7 @@ export module Schemas {
 		id: Type.Number(),
 		name: Type.String(),
 		price: Type.Number(),
-		length: Type.Number(),
+		static_duration: Type.Optional(Type.String()),
 	})
 }
 
