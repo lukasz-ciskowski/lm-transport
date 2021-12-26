@@ -4,14 +4,14 @@ export interface RouteSchema {
 	Id: number
 	BusStop: BusStop
 	FlowOrder: number
-	Direction?: DirectionKeys
+	Direction: DirectionKeys
 }
 
 export interface RouteSchemasQuery {
 	Id: number
 	BusStop: Pick<BusStop, "Id" | "Name">
 	FlowOrder: number
-	Direction?: DirectionKeys
+	Direction: DirectionKeys
 }
 
 export enum DirectionKeys {

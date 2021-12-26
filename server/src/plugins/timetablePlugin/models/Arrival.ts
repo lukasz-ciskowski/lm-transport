@@ -25,7 +25,7 @@ export interface ArrivalByBusStop {
 export interface ArrivalByRouteRun {
 	Id: number
 	RouteSchema: {
-		BusStop: Omit<BusStop, "BusLine">
+		BusStop: BusStop
 	}
 	ArrivalTime: string
 }
