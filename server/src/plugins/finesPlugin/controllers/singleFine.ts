@@ -44,6 +44,6 @@ function adapt(fine: Fine): FineSchema {
 		id: fine.Id,
 		fine_price: fine.FinePrice,
 		date: fine.Date,
-		is_paid: fine.IsPaid,
+		is_paid: Boolean(fine.IsPaid),
 	}
 }

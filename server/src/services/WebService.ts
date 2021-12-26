@@ -12,7 +12,6 @@ import passengerPlugin from "../plugins/passengerPlugin"
 import finePlugin from "../plugins/finesPlugin"
 import ticketsPlugin from "../plugins/ticketsPlugin"
 import busLinesPlugin from "../plugins/busLinesPlugin"
-import busPlugin from "../plugins/busPlugin"
 import timetablePlugin from "../plugins/timetablePlugin"
 
 export class WebService {
@@ -48,7 +47,6 @@ export class WebService {
 				i.register(finePlugin)
 				i.register(ticketsPlugin)
 				i.register(busLinesPlugin)
-				i.register(busPlugin)
 				next()
 			},
 			{ prefix: "/api" }

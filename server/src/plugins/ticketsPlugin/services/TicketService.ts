@@ -1,4 +1,4 @@
-import { internal, notFound, unauthorized } from "@hapi/boom"
+import { internal, notFound } from "@hapi/boom"
 import { PagingRequest } from "../../../../types/Paging"
 import { BusLine } from "../../busLinesPlugin/models/BusLine"
 import { Passenger } from "../../passengerPlugin/models/Passenger"
@@ -12,8 +12,8 @@ class Service {
 	async buyTicket(
 		startDate: Date,
 		passenger: Passenger,
-		busLine: BusLine,
 		ticketType: TicketType,
+		busLine?: BusLine,
 		discount?: Discount
 	) {
 		const calculatedPrice = discount
@@ -27,13 +27,13 @@ class Service {
 		if (ticketType.StaticDuration) {
 			estimatedStartDate = moment(startDate).startOf("D").toDate()
 			estimatedEndDate = moment(startDate)
-				.add(moment.duration(ticketType.StaticDuration))
+				.add(ticketType.StaticDuration, "hours")
 				.endOf("D")
 				.toDate()
 		} else {
 			// temporary solution - TODO calculate max length of single busline journey
 			estimatedStartDate = startDate
-			estimatedEndDate = moment(startDate).add(4, "h").toDate()
+			estimatedEndDate = moment(startDate).add(4, "hours").toDate()
 		}
 
 		if (!estimatedStartDate || !estimatedEndDate) throw internal("Date parsing error")

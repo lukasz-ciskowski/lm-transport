@@ -9,7 +9,7 @@ import { SingleTicket } from "../models/Ticket"
 module RequestSchemas {
 	export const Ticket = Type.Object({
 		id: Type.Number(),
-		bus_line: BusLineSchemas.BusLine,
+		bus_line: Type.Optional(BusLineSchemas.BusLine),
 		ticket_type: Type.Object({
 			name: Type.String(),
 			price: Type.Number(),
@@ -59,10 +59,12 @@ export async function singleTicket(req: FastifyRequest<Request>, res: FastifyRep
 function adapt(result: SingleTicket): TicketSchema {
 	return {
 		id: result.Id,
-		bus_line: {
-			id: result.BusLine.Id,
-			line_number: result.BusLine.LineNumber,
-		},
+		bus_line: result.BusLine
+			? {
+					id: result.BusLine.Id,
+					line_number: result.BusLine.LineNumber,
+			  }
+			: undefined,
 		discount: result.Discount
 			? {
 					name: result.Discount.Name,

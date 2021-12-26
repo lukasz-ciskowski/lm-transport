@@ -1,13 +1,15 @@
+import { DirectionKeys } from "../models/RouteSchema"
 import { Schedule } from "../models/Schedule"
 import { ArrivalRepository } from "../repositories/ArrivalRepository"
+import { RouteRunRepository } from "../repositories/RouteRunRepository"
 
 class Service {
-	async getByBusStop(busStopId: number, schedule: Schedule, routeId?: number, from?: Date) {
+	async getByBusStop(busStopId: number, schedule: Schedule, direction?: DirectionKeys, from?: Date) {
 		const arrivalTime = from ? this.dbTime(from) : undefined
 		const result = await ArrivalRepository.getByBusStop(
 			busStopId,
 			schedule.Id,
-			routeId,
+			direction,
 			arrivalTime
 		)
 		return result.arrivals
@@ -17,20 +19,20 @@ class Service {
 		fromBusStopId: number,
 		toBusStopId: number,
 		schedule: Schedule,
-		routeId?: number,
+		direction?: DirectionKeys,
 		from?: Date
 	) {
 		const arrivalTime = from ? this.dbTime(from) : undefined
 		const busStopsFrom = await ArrivalRepository.getByBusStop(
 			fromBusStopId,
 			schedule.Id,
-			routeId,
+			direction,
 			arrivalTime
 		)
 		const busStopsTo = await ArrivalRepository.getByBusStop(
 			toBusStopId,
 			schedule.Id,
-			routeId,
+			direction,
 			arrivalTime
 		)
 
@@ -44,8 +46,9 @@ class Service {
 	}
 
 	async getByRouteRun(routeRunId: number) {
-		const result = await ArrivalRepository.getByRouteRun(routeRunId)
-		return result.arrivals
+		const arrivalResult = await ArrivalRepository.getByRouteRun(routeRunId)
+		const decoratorResult = await RouteRunRepository.getRouteRunWithDecoration(routeRunId)
+		return { arrivals: arrivalResult.arrivals, routeRun: decoratorResult.run }
 	}
 
 	private dbTime(date: Date) {

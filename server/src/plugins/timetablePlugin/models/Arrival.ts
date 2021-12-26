@@ -14,14 +14,11 @@ export interface ArrivalByBusStop {
 	Id: number
 	RouteRun: {
 		Id: number
-		Route: {
-			Id: number
-			StartBusStop: Pick<BusStop, "Id" | "Name">
-			EndBusStop: Pick<BusStop, "Id" | "Name">
-			BusLine: BusLine
-		}
+		BusLine: BusLine
 	}
-	RouteSchema: Pick<RouteSchema, "FlowOrder">
+	RouteSchema: Pick<RouteSchema, "FlowOrder" | "Direction">
+	FromEndpoint: Pick<BusStop, "Id" | "Name">
+	ToEndpoint: Pick<BusStop, "Id" | "Name">
 	ArrivalTime: string
 }
 

@@ -9,9 +9,9 @@ class Repository extends BaseRepository {
             INSERT INTO Tickets
             OUTPUT inserted.Id
             VALUES (
-                ${body.Passenger.Id}, ${body.BusLine.Id}, ${body.StartDate},
+                ${body.Passenger.Id}, ${body.BusLine?.Id ?? null}, ${body.StartDate},
                 ${body.EstimatedEndDate}, ${body.CalculatedPrice}, ${body.BoughtAt},
-                ${body.TicketType.Id}, ${body.Discount?.Id}
+                ${body.TicketType.Id}, ${body.Discount?.Id ?? null}
             )
         `
 

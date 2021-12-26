@@ -50,6 +50,6 @@ function adapt(fine: Fine): FinesSchema[number] {
 	return {
 		id: fine.Id,
 		date: fine.Date,
-		is_paid: fine.IsPaid,
+		is_paid: Boolean(fine.IsPaid),
 	}
 }

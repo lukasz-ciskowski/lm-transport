@@ -3,5 +3,5 @@ export interface Fine {
     PassengerId: number
     FinePrice: number
 	Date: string
-	IsPaid: boolean
+	IsPaid: number
 }

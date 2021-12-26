@@ -12,7 +12,7 @@ module RequestSchemas {
 	const Ticket = Type.Object({
 		id: Type.Number(),
 		ticket_type: Type.String(),
-		bus_line: BusLineSchemas.BusLine,
+		bus_line: Type.Optional(BusLineSchemas.BusLine),
 		start_date: Type.String({ format: "date-time" }),
 		estimated_end_date: Type.String({ format: "date-time" }),
 	})
@@ -56,17 +56,19 @@ export async function allTickets(req: FastifyRequest<Request>, res: FastifyReply
 		},
 		{ active }
 	)
-    
+
 	res.code(200).send({ total: result.total, rows: result.rows.map(adapt) })
 }
 
 function adapt(result: QueriedTicket): TicketsSchema[number] {
 	return {
 		id: result.Id,
-		bus_line: {
-			id: result.BusLine.Id,
-			line_number: result.BusLine.LineNumber,
-		},
+		bus_line: result.BusLine
+			? {
+					id: result.BusLine.Id,
+					line_number: result.BusLine.LineNumber,
+			  }
+			: undefined,
 		ticket_type: result.TicketType,
 		start_date: result.StartDate,
 		estimated_end_date: result.EstimatedEndDate,

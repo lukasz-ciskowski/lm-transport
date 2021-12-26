@@ -2,10 +2,9 @@ import { Static, Type } from "@sinclair/typebox"
 import { FastifyReply, FastifyRequest } from "fastify"
 
 import { RequestRouteOptions } from "../../../../types/RouteOptions"
-import { RouteSchemaService } from "../services/RouteSchemaService"
-import { RouteSchemasQuery } from "../models/RouteSchema"
+import { RouteSchemaService, SchemaDirection } from "../services/RouteSchemaService"
+import { Schemas as DirectionSchemas } from "../schemas/directionSchema"
 import { BusStop } from "../models/BusStop"
-import { badRequest } from "@hapi/boom"
 
 module RequestSchemas {
 	export const BusStop = Type.Object({
@@ -17,8 +16,8 @@ module RequestSchemas {
 		bus_stop: BusStop,
 		flow_order: Type.Number(),
 	})
-	const BusEndpoints = Type.Object({
-		id: Type.Number(),
+	export const BusEndpoints = Type.Object({
+		direction: DirectionSchemas.Direction,
 		start_bus_stop: BusStop,
 		end_bus_stop: BusStop,
 		schemas: Type.Array(RouteSchema),
@@ -32,15 +31,13 @@ module RequestSchemas {
 		}),
 	})
 	export const Querystring = Type.Object({
-		bus_line_id: Type.Optional(Type.Number()),
-		route_id: Type.Optional(Type.Number()),
+		bus_line: Type.Number(),
+		direction: Type.Optional(DirectionSchemas.Direction),
 	})
-	Type.Pick
 }
 
 type Querystring = Static<typeof RequestSchemas.Querystring>
-type RouteSchema = Static<typeof RequestSchemas.RouteSchema>
-type ResponseSchemas = Static<typeof RequestSchemas.Response>["routes"]
+type BusEndpointsSchema = Static<typeof RequestSchemas.BusEndpoints>
 type BusStopSchema = Static<typeof RequestSchemas.BusStop>
 
 export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
@@ -58,51 +55,32 @@ interface Request {
 }
 
 export async function busLineRouteSchema(req: FastifyRequest<Request>, res: FastifyReply) {
-	const { bus_line_id, route_id } = req.query
-	if (!bus_line_id && !route_id) throw badRequest("No parameter defined")
-	if (bus_line_id && route_id) throw badRequest("Request limited to one parameter")
+	const { bus_line, direction } = req.query
 
 	const result = await RouteSchemaService.getRouteSchemas({
-		busLineId: bus_line_id,
-		routeId: route_id,
+		busLine: bus_line,
+		direction: direction,
 	})
 
-	const schemasCollection = result.reduce<ResponseSchemas>((acc, curr) => {
-		const endpoint = acc.find(
-			(endpoint) => endpoint.start_bus_stop.id === curr.Route.StartBusStop.Id
-		)
-		if (!endpoint) {
-			acc.push(
-				{
-					id: curr.Route.Id,
-					start_bus_stop: busStopAdapt(curr.Route.StartBusStop),
-					end_bus_stop: busStopAdapt(curr.Route.EndBusStop),
-					schemas: [adapt(curr)]
-				}
-			)
-		} else {
-			endpoint.schemas.push(adapt(curr))
-		}
-		return acc
-	}, [])
-
-	res.code(200).send({ routes: schemasCollection })
+	res.code(200).send({ routes: result.map(adapt) })
 }
 
-function adapt(result: RouteSchemasQuery): RouteSchema {
+function adapt(result: SchemaDirection): BusEndpointsSchema {
 	return {
-		id: result.Id,
-		bus_stop: {
-			id: result.BusStop.Id,
-			name: result.BusStop.Name,
-		},
-		flow_order: result.FlowOrder,
+		direction: result.direction,
+		start_bus_stop: adaptBusStop(result.endpoints.start),
+		end_bus_stop: adaptBusStop(result.endpoints.end),
+		schemas: result.schemas.map((schema) => ({
+			id: schema.Id,
+			flow_order: schema.FlowOrder,
+			bus_stop: adaptBusStop(schema.BusStop)
+		})),
 	}
 }
 
-function busStopAdapt(result: Pick<BusStop, "Id" | "Name">): BusStopSchema {
+function adaptBusStop(busStop: Pick<BusStop, "Id" | "Name">): BusStopSchema {
 	return {
-		id: result.Id,
-		name: result.Name,
+		id: busStop.Id,
+		name: busStop.Name,
 	}
 }

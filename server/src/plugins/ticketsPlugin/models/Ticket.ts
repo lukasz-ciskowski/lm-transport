@@ -6,7 +6,7 @@ import { TicketType } from "./TicketType"
 export interface Ticket {
 	Id: number
 	Passenger: Passenger
-	BusLine: BusLine
+	BusLine?: BusLine
 	StartDate: string
 	EstimatedEndDate: string
 	CalculatedPrice: number
@@ -17,7 +17,7 @@ export interface Ticket {
 
 export type QueriedTicket = {
 	Id: number
-	BusLine: BusLine
+	BusLine?: BusLine
 	StartDate: string
 	EstimatedEndDate: string
 	TicketType: string

@@ -8,6 +8,10 @@ import { Schemas as BusStopSchemas } from "../schemas/busStopSchema"
 
 module RequestSchemas {
 	export const Response = Type.Object({
+		run: Type.Object({
+			id: Type.Number(),
+			decorator: Type.Optional(Type.String()),
+		}),
 		arrivals: Type.Array(
 			Type.Object({
 				id: Type.Number(),
@@ -42,11 +46,15 @@ export async function routeRun(req: FastifyRequest<Request>, res: FastifyReply) 
 	const result = await ArrivalService.getByRouteRun(req.params.id)
 
 	res.code(200).send({
-		arrivals: result.map(adapt),
+		run: {
+			id: result.routeRun.Id,
+			decorator: result.routeRun.RunDecoration?.Name,
+		},
+		arrivals: result.arrivals.map(arrivalsAdapt),
 	})
 }
 
-function adapt(result: ArrivalByRouteRun): Response[number] {
+function arrivalsAdapt(result: ArrivalByRouteRun): Response[number] {
 	return {
 		id: result.Id,
 		arrival_time: result.ArrivalTime,
