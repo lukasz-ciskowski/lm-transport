@@ -5,12 +5,13 @@ import { RequestRouteOptions } from "../../../../types/RouteOptions"
 import { ArrivalService } from "../services/ArrivalService"
 import { ArrivalByRouteRun } from "../models/Arrival"
 import { Schemas as BusStopSchemas } from "../schemas/busStopSchema"
+import { Schemas as RunDecoratorSchemas } from "../schemas/runDecorator"
 
 module RequestSchemas {
 	export const Response = Type.Object({
 		run: Type.Object({
 			id: Type.Number(),
-			decorator: Type.Optional(Type.String()),
+			decorator: Type.Optional(RunDecoratorSchemas.RunDecorator),
 		}),
 		arrivals: Type.Array(
 			Type.Object({
@@ -48,7 +49,12 @@ export async function routeRun(req: FastifyRequest<Request>, res: FastifyReply) 
 	res.code(200).send({
 		run: {
 			id: result.routeRun.Id,
-			decorator: result.routeRun.RunDecoration?.Name,
+			decorator: result.routeRun.RunDecoration
+				? {
+						name: result.routeRun.RunDecoration?.Name,
+						prefix: result.routeRun.RunDecoration?.Prefix,
+				  }
+				: undefined,
 		},
 		arrivals: result.arrivals.map(arrivalsAdapt),
 	})

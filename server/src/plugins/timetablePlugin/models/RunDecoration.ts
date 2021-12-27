@@ -1,4 +1,5 @@
 export interface RunDecoration {
     Id: number
-    Name: number
+    Name: string
+    Prefix: string
 }

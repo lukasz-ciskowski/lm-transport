@@ -18,7 +18,6 @@ class Repository extends BaseRepository {
 			WHERE Direction=RS.Direction AND BusLineId=BL.Id
 		`
 
-
 		let query = `
 			SELECT
             A.Id, A.ArrivalTime, A.RouteRunId AS 'RouteRun.Id',
@@ -35,7 +34,7 @@ class Repository extends BaseRepository {
 			query += ` AND RS.Direction=@Direction`
 		}
 		if (from) {
-			query += ` AND A.ArrivalTime >= @ArrivalTime`
+			query += ` AND A.ArrivalTime>=@ArrivalTime`
 		}
 
 		query += ` ORDER BY A.ArrivalTime`
@@ -59,7 +58,7 @@ class Repository extends BaseRepository {
             A.Id, A.ArrivalTime,
 			BS.Id AS 'RouteSchema.BusStop.Id', Bs.Name AS 'RouteSchema.BusStop.Name', BS.Street AS 'RouteSchema.BusStop.Street',
 			BS.City AS 'RouteSchema.BusStop.City', BS.PostCode as 'RouteSchema.BusStop.PostCode', BS.Lat as 'RouteSchema.BusStop.Lat', BS.Lon as 'RouteSchema.BusStop.Lon',
-			RR.Id AS 'RouteRun.Id', RD.Id as 'RouteRun.RunDecoration.Id', RD.Name as 'RouteRun.RunDecoration.Name'
+			RR.Id AS 'RouteRun.Id'
             FROM Arrivals AS A
 			LEFT JOIN RouteSchemas RS ON RS.Id=RouteSchemaId
 			LEFT JOIN BusStops BS ON RS.BusStopId=BS.Id
