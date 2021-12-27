@@ -6,24 +6,21 @@ import { ScheduleService } from "../services/ScheduleService"
 import { ArrivalService } from "../services/ArrivalService"
 import { ArrivalByBusStop } from "../models/Arrival"
 import { Schemas as BusLineSchemas } from "../../busLinesPlugin/schemas/busLineSchema"
-import { Schemas as DirectionSchemas } from "../schemas/directionSchema"
-import { BusStop } from "../models/BusStop"
+import { BaseBusStopSchema } from "../schemas/busStopSchema"
+import { Schemas as RunDecoratorSchemas } from "../schemas/runDecorator"
+import { BaseBusStop } from "../models/BusStop"
 
 module RequestSchemas {
-	export const BusStop = Type.Object({
-		id: Type.Number(),
-		name: Type.String(),
-	})
-
 	export const Response = Type.Object({
 		arrivals: Type.Array(
 			Type.Object({
 				id: Type.Number(),
-				from_endpoint: BusStop,
-				to_endpoint: BusStop,
+				from: Type.String(),
+				to: Type.String(),
 				route_run: Type.Object({
 					id: Type.Number(),
 					bus_line: BusLineSchemas.BusLine,
+					decorator: Type.Optional(RunDecoratorSchemas.RunDecorator),
 				}),
 				arrival_time: Type.String({ format: "time" }),
 			})
@@ -31,14 +28,11 @@ module RequestSchemas {
 	})
 	export const QueryString = Type.Object({
 		bus_stop: Type.Number(),
-		direction: Type.Optional(DirectionSchemas.Direction),
-		show_past: Type.Optional(Type.Boolean()),
 		date: Type.String({ format: "date-time" }),
 	})
 }
 
 type QueryString = Static<typeof RequestSchemas.QueryString>
-type BusStopSchema = Static<typeof RequestSchemas.BusStop>
 type Response = Static<typeof RequestSchemas.Response>["arrivals"]
 
 export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
@@ -61,30 +55,35 @@ export async function arrivals(req: FastifyRequest<Request>, res: FastifyReply) 
 	const result = await ArrivalService.getByBusStop(
 		req.query.bus_stop,
 		schedule,
-		req.query.direction,
 		dateObj
 	)
 
-	res.code(200).send({ connections: result.map(adapt) })
+	res.code(200).send({ arrivals: result.map(adapt) })
 }
 
 function adapt(result: ArrivalByBusStop): Response[number] {
 	return {
 		id: result.Id,
 		arrival_time: result.ArrivalTime,
-		from_endpoint: adaptBusStop(result.FromEndpoint),
-		to_endpoint: adaptBusStop(result.ToEndpoint),
+		from: result.StartBusStop,
+		to: result.EndBusStop,
 		route_run: {
 			id: result.RouteRun.Id,
+			decorator: result.RouteRun.RunDecoration
+				? {
+						name: result.RouteRun.RunDecoration?.Name,
+						prefix: result.RouteRun.RunDecoration?.Prefix,
+				  }
+				: undefined,
 			bus_line: {
-				id: result.RouteSchema.BusLine.Id,
-				line_number: result.RouteSchema.BusLine.LineNumber,
+				id: result.RouteRun.BusLine.Id,
+				line_number: result.RouteRun.BusLine.LineNumber,
 			},
 		},
 	}
 }
 
-function adaptBusStop(busStop: Pick<BusStop, "Id" | "Name">): BusStopSchema {
+function adaptBusStop(busStop: BaseBusStop): BaseBusStopSchema {
 	return {
 		id: busStop.Id,
 		name: busStop.Name,

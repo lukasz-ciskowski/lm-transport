@@ -1,27 +1,29 @@
-import { BusStop } from "./BusStop"
-import { RouteRun } from "./RouteRun"
-import { RouteSchema } from "./RouteSchema"
+import { BusLineEndpoints } from "../../busLinesPlugin/models/BusLine"
+import { BaseBusStop, BusStop } from "./BusStop"
+import { DirectionKeys, RouteRun } from "./RouteRun"
 
 export interface Arrival {
 	Id: number
-	RouteSchema: RouteSchema
+	BusStop: BusStop
 	RouteRun: RouteRun
 	ArrivalTime: string
 }
 
 export interface ArrivalByBusStop {
 	Id: number
-	RouteRun: Pick<RouteRun, "Id">
-	RouteSchema: Pick<RouteSchema, "BusLine" | "FlowOrder">
-	FromEndpoint: Pick<BusStop, "Id" | "Name">
-	ToEndpoint: Pick<BusStop, "Id" | "Name">
+	RouteRun: Omit<RouteRun, "Schedule">
+	StartBusStop: string
+	EndBusStop: string
 	ArrivalTime: string
 }
 
 export interface ArrivalByRouteRun {
 	Id: number
-	RouteSchema: {
-		BusStop: BusStop
-	}
+	BusStop: BusStop
+	RouteRun: Omit<RouteRun, "Schedule">
 	ArrivalTime: string
+}
+
+export interface AvailableBusStop {
+	BusStop: BaseBusStop
 }

@@ -1,17 +1,12 @@
-import { DirectionKeys } from "../models/RouteSchema"
 import { Schedule } from "../models/Schedule"
 import { ArrivalRepository } from "../repositories/ArrivalRepository"
 import { RouteRunRepository } from "../repositories/RouteRunRepository"
 
 class Service {
-	async getByBusStop(busStopId: number, schedule: Schedule, direction?: DirectionKeys, from?: Date) {
-		const arrivalTime = from ? this.dbTime(from) : undefined
-		const result = await ArrivalRepository.getByBusStop(
-			busStopId,
-			schedule.Id,
-			direction,
-			arrivalTime
-		)
+	async getByBusStop(busStopId: number, schedule: Schedule, date: Date) {
+		const arrivalTime = this.dbTime(date)
+		const result = await ArrivalRepository.getByBusStop(busStopId, schedule.Id, arrivalTime)
+
 		return result.arrivals
 	}
 
@@ -19,30 +14,17 @@ class Service {
 		fromBusStopId: number,
 		toBusStopId: number,
 		schedule: Schedule,
-		direction?: DirectionKeys,
-		from?: Date
+		date: Date
 	) {
-		const arrivalTime = from ? this.dbTime(from) : undefined
-		const busStopsFrom = await ArrivalRepository.getByBusStop(
+		const arrivalTime = this.dbTime(date)
+		const result = await ArrivalRepository.getByConnection(
 			fromBusStopId,
-			schedule.Id,
-			direction,
-			arrivalTime
-		)
-		const busStopsTo = await ArrivalRepository.getByBusStop(
 			toBusStopId,
 			schedule.Id,
-			direction,
 			arrivalTime
 		)
 
-		return busStopsFrom.arrivals.filter((from) =>
-			busStopsTo.arrivals.find(
-				(to) =>
-					to.RouteRun.Id === from.RouteRun.Id &&
-					from.RouteSchema.FlowOrder < to.RouteSchema.FlowOrder
-			)
-		)
+		return result.arrivals
 	}
 
 	async getByRouteRun(routeRunId: number) {

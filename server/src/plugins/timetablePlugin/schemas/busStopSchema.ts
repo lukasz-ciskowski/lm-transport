@@ -10,6 +10,11 @@ export module Schemas {
 		lat: Type.Number(),
 		lon: Type.Number(),
 	})
+	export const BaseBusStop = Type.Object({
+		id: Type.Number(),
+		name: Type.String()
+	})
 }
 
 export type BusStopSchema = Static<typeof Schemas.BusStop>
+export type BaseBusStopSchema = Static<typeof Schemas.BaseBusStop>

@@ -7,3 +7,5 @@ export interface BusStop {
     Lat: number
     Lon: number
 }
+
+export type BaseBusStop = Pick<BusStop, "Id" | "Name">

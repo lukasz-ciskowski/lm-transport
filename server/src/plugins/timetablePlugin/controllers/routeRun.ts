@@ -65,13 +65,13 @@ function arrivalsAdapt(result: ArrivalByRouteRun): Response[number] {
 		id: result.Id,
 		arrival_time: result.ArrivalTime,
 		bus_stop: {
-			id: result.RouteSchema.BusStop.Id,
-			name: result.RouteSchema.BusStop.Name,
-			street: result.RouteSchema.BusStop.Street,
-			city: result.RouteSchema.BusStop.City,
-			post_code: result.RouteSchema.BusStop.PostCode,
-			lat: result.RouteSchema.BusStop.Lat,
-			lon: result.RouteSchema.BusStop.Lon,
+			id: result.BusStop.Id,
+			name: result.BusStop.Name,
+			street: result.BusStop.Street,
+			city: result.BusStop.City,
+			post_code: result.BusStop.PostCode,
+			lat: result.BusStop.Lat,
+			lon: result.BusStop.Lon,
 		},
 	}
 }
