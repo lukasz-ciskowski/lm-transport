@@ -1,7 +1,9 @@
+import { BusLine } from "../../busLinesPlugin/models/BusLine";
 import { BusStop } from "./BusStop"
 
 export interface RouteSchema {
 	Id: number
+	BusLine: BusLine
 	BusStop: BusStop
 	FlowOrder: number
 	Direction: DirectionKeys

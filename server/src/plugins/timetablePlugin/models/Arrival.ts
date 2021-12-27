@@ -1,4 +1,3 @@
-import { BusLine } from "../../busLinesPlugin/models/BusLine"
 import { BusStop } from "./BusStop"
 import { RouteRun } from "./RouteRun"
 import { RouteSchema } from "./RouteSchema"
@@ -12,11 +11,8 @@ export interface Arrival {
 
 export interface ArrivalByBusStop {
 	Id: number
-	RouteRun: {
-		Id: number
-		BusLine: BusLine
-	}
-	RouteSchema: Pick<RouteSchema, "FlowOrder" | "Direction">
+	RouteRun: Pick<RouteRun, "Id">
+	RouteSchema: Pick<RouteSchema, "BusLine" | "FlowOrder">
 	FromEndpoint: Pick<BusStop, "Id" | "Name">
 	ToEndpoint: Pick<BusStop, "Id" | "Name">
 	ArrivalTime: string

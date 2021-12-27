@@ -1,6 +1,6 @@
 export interface Schedule {
 	Id: number
-	Type: string
+	Name: string
     WeekNumFrom: number
     WeekNumTo: number
 }

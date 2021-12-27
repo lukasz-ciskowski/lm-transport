@@ -22,13 +22,12 @@ class Repository extends BaseRepository {
 		let query = `
 			SELECT
             A.Id, A.ArrivalTime, A.RouteRunId AS 'RouteRun.Id',
-			RS.FlowOrder as 'RouteSchema.FlowOrder', RS.Direction as 'RouteSchema.Direction',
-            BL.Id AS 'RouteRun.BusLine.Id', BL.Name AS 'RouteRun.BusLine.Name',
-			'FromEndpoint' = @FromEndpointQuery, 'ToEndpoint' = @ToEndpointQuery
+			RS.FlowOrder as 'RouteSchema.FlowOrder',
+			BL.Id AS 'RouteSchema.BusLine.Id', BL.Name AS 'RouteSchema.BusLine.Name',
+			'FromEndpoint' = (@FromEndpointQuery), 'ToEndpoint' = (@ToEndpointQuery)
             FROM Arrivals AS A
 			LEFT JOIN RouteSchemas RS ON RS.Id=RouteSchemaId
-			LEFT JOIN RouteRuns RR ON RR.Id=RouteRunId
-            LEFT JOIN BusLines BL ON BL.Id = R.BusLineId
+            LEFT JOIN BusLines BL ON BL.Id = RS.BusLineId
             WHERE RR.ScheduleId=@ScheduleId AND RS.BusStopId=@BusStopId
 		`
 

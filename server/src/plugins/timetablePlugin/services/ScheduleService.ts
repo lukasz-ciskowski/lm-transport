@@ -10,7 +10,7 @@ class Service {
 	}
 
 	async getScheduleByDay(date: Date) {
-		const weekdayNumber = date.getDay()
+		const weekdayNumber = date.getDay() + 1
 		const allSchedules = await this._cacheService.get<Schedule[]>("days", async () => {
 			const result = await ScheduleRepository.getAll()
 			return result.schedules

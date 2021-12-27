@@ -79,8 +79,8 @@ function adapt(result: ArrivalByBusStop): Response[number] {
 		route_run: {
 			id: result.RouteRun.Id,
 			bus_line: {
-				id: result.RouteRun.BusLine.Id,
-				line_number: result.RouteRun.BusLine.LineNumber,
+				id: result.RouteSchema.BusLine.Id,
+				line_number: result.RouteSchema.BusLine.LineNumber,
 			},
 		},
 	}
