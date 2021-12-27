@@ -26,4 +26,5 @@ export interface ArrivalByRouteRun {
 
 export interface AvailableBusStop {
 	BusStop: BaseBusStop
+	Direction: DirectionKeys
 }

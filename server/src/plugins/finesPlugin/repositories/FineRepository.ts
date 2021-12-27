@@ -25,7 +25,7 @@ class Repository extends BaseRepository {
 		const response = await this.db
 			.request()
 			.input("PassengerId", passengerId)
-			.input("IsPaid", Number(isPaid))
+			.input("IsPaid", isPaid)
 			.query(query)
 
 		return { fines: response.recordset }

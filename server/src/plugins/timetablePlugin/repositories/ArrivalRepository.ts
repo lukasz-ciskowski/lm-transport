@@ -1,10 +1,6 @@
 import { BaseRepository } from "../../helpers/BaseRepository"
 import { parseDbToObject } from "../../helpers/dbObject"
-import {
-	ArrivalByBusStop,
-	ArrivalByRouteRun,
-	AvailableBusStop,
-} from "../models/Arrival"
+import { ArrivalByBusStop, ArrivalByRouteRun, AvailableBusStop } from "../models/Arrival"
 import { DirectionKeys } from "../models/RouteSchema"
 
 class Repository extends BaseRepository {
@@ -107,7 +103,6 @@ class Repository extends BaseRepository {
 		return { arrivals: result.recordset.map(parseDbToObject) }
 	}
 
-
 	public async getByRouteRun(routeRunId: number): Promise<{ arrivals: ArrivalByRouteRun[] }> {
 		const result = await this.db.query`
             SELECT
@@ -129,17 +124,33 @@ class Repository extends BaseRepository {
 
 	public async getAllAvailableStops(
 		busLineId: number,
-		direction: DirectionKeys
+		direction?: DirectionKeys
 	): Promise<{ stops: AvailableBusStop[] }> {
-		const result = await this.db.query`
-			SELECT
-			BS.Id AS 'BusStop.Id', Bs.Name AS 'BusStop.Name', MIN(ArrivalTime)
-			FROM Arrivals AS A
-			LEFT JOIN RouteRuns RR ON RouteRunId=RR.Id
-			WHERE RR.BusLineId=${busLineId} AND RR.Direction=${direction}
-			GROUP BY 'BusStop.Id', 'BusStop.Name'
-			ORDER BY A.ArrivalTime
+		let query = `
+			SELECT T.BusStopId AS 'BusStop.Id', T.BusStopName AS 'BusStop.Name', T.Direction
+			FROM(
+				SELECT
+				BS.Id AS 'BusStopId', Bs.Name AS 'BusStopName', RR.Direction, RR.BusLineId, A.ArrivalTime,
+					row_number() over (partition by RR.BusLineId, RR.Direction, BS.Id order by A.ArrivalTime asc) as seqnum_asc
+				FROM Arrivals AS A
+				LEFT JOIN RouteRuns RR ON RouteRunId=RR.Id
+				LEFT JOIN BusStops BS ON BS.Id=A.BusStopId
+				order by A.ArrivalTime OFFSET 0 ROWS
+			) T
+			WHERE T.BusLineId=@BusLine AND T.seqnum_asc=1
 		`
+
+		if (direction !== undefined) {
+			query += ` AND Direction=@Direction`
+		}
+
+		query += ` ORDER BY T.Direction, T.ArrivalTime`
+
+		const result = await this.db
+			.request()
+			.input("BusLine", busLineId)
+			.input("Direction", direction)
+			.query(query)
 
 		return { stops: result.recordset.map(parseDbToObject) }
 	}
