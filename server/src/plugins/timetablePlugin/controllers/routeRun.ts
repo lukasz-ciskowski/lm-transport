@@ -16,7 +16,7 @@ module RequestSchemas {
 		arrivals: Type.Array(
 			Type.Object({
 				id: Type.Number(),
-				bus_stop: BusStopSchemas.BusStop,
+				bus_stop: BusStopSchemas.BaseBusStop,
 				arrival_time: Type.String({ format: "time" }),
 			})
 		),
@@ -67,11 +67,6 @@ function arrivalsAdapt(result: ArrivalByRouteRun): Response[number] {
 		bus_stop: {
 			id: result.BusStop.Id,
 			name: result.BusStop.Name,
-			street: result.BusStop.Street,
-			city: result.BusStop.City,
-			post_code: result.BusStop.PostCode,
-			lat: result.BusStop.Lat,
-			lon: result.BusStop.Lon,
 		},
 	}
 }

@@ -7,21 +7,31 @@ import { RouteRunRepository } from "../repositories/RouteRunRepository"
 type RouteSchemaType = [BaseBusStop[], BaseBusStop[]]
 
 class Service {
-	async getRouteSchema(
-		busLine: number,
-		direction?: DirectionKeys
-	) {
-		const result = await ArrivalRepository.getAllAvailableStops(busLine, direction)
+	async getRouteSchema(busLine: number) {
+		const result = await ArrivalRepository.getAllAvailableStops(busLine)
 
-		return result.stops.reduce<RouteSchemaType>((acc, curr) => {			
-			acc[Number(curr.Direction)].push(curr.BusStop)
-			return acc
-		}, [[], []])
+		return result.stops.reduce<RouteSchemaType>(
+			(acc, curr) => {
+				acc[Number(curr.Direction)].push(curr.BusStop)
+				return acc
+			},
+			[[], []]
+		)
 	}
 
-	async getByBusStop(busStopId: number, schedule: Schedule, date: Date) {
+	async getByBusStop(
+		busStopId: number,
+		schedule: Schedule,
+		date: Date,
+		direction?: DirectionKeys
+	) {
 		const arrivalTime = this.dbTime(date)
-		const result = await ArrivalRepository.getByBusStop(busStopId, schedule.Id, arrivalTime)
+		const result = await ArrivalRepository.getByBusStop(
+			busStopId,
+			schedule.Id,
+			arrivalTime,
+			direction
+		)
 
 		return result.arrivals
 	}

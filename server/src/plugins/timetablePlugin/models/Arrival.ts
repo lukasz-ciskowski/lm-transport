@@ -12,15 +12,14 @@ export interface Arrival {
 export interface ArrivalByBusStop {
 	Id: number
 	RouteRun: Omit<RouteRun, "Schedule">
-	StartBusStop: string
-	EndBusStop: string
+	FirstBusStop: string
+	LastBusStop: string
 	ArrivalTime: string
 }
 
 export interface ArrivalByRouteRun {
 	Id: number
-	BusStop: BusStop
-	RouteRun: Omit<RouteRun, "Schedule">
+	BusStop: BaseBusStop
 	ArrivalTime: string
 }
 

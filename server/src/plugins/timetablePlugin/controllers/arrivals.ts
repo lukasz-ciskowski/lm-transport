@@ -6,17 +6,16 @@ import { ScheduleService } from "../services/ScheduleService"
 import { ArrivalService } from "../services/ArrivalService"
 import { ArrivalByBusStop } from "../models/Arrival"
 import { Schemas as BusLineSchemas } from "../../busLinesPlugin/schemas/busLineSchema"
-import { BaseBusStopSchema } from "../schemas/busStopSchema"
 import { Schemas as RunDecoratorSchemas } from "../schemas/runDecorator"
-import { BaseBusStop } from "../models/BusStop"
+import { Schemas as DirectionSchemas } from "../schemas/directionSchema"
 
 module RequestSchemas {
 	export const Response = Type.Object({
 		arrivals: Type.Array(
 			Type.Object({
 				id: Type.Number(),
-				from: Type.String(),
-				to: Type.String(),
+				first_stop: Type.String(),
+				last_stop: Type.String(),
 				route_run: Type.Object({
 					id: Type.Number(),
 					bus_line: BusLineSchemas.BusLine,
@@ -29,6 +28,7 @@ module RequestSchemas {
 	export const QueryString = Type.Object({
 		bus_stop: Type.Number(),
 		date: Type.String({ format: "date-time" }),
+		direction: Type.Optional(DirectionSchemas.Direction),
 	})
 }
 
@@ -55,7 +55,8 @@ export async function arrivals(req: FastifyRequest<Request>, res: FastifyReply) 
 	const result = await ArrivalService.getByBusStop(
 		req.query.bus_stop,
 		schedule,
-		dateObj
+		dateObj,
+		req.query.direction
 	)
 
 	res.code(200).send({ arrivals: result.map(adapt) })
@@ -65,8 +66,8 @@ function adapt(result: ArrivalByBusStop): Response[number] {
 	return {
 		id: result.Id,
 		arrival_time: result.ArrivalTime,
-		from: result.StartBusStop,
-		to: result.EndBusStop,
+		first_stop: result.FirstBusStop,
+		last_stop: result.LastBusStop,
 		route_run: {
 			id: result.RouteRun.Id,
 			decorator: result.RouteRun.RunDecoration
@@ -80,12 +81,5 @@ function adapt(result: ArrivalByBusStop): Response[number] {
 				line_number: result.RouteRun.BusLine.LineNumber,
 			},
 		},
-	}
-}
-
-function adaptBusStop(busStop: BaseBusStop): BaseBusStopSchema {
-	return {
-		id: busStop.Id,
-		name: busStop.Name,
 	}
 }

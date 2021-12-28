@@ -2,10 +2,8 @@ import { Static, Type } from "@sinclair/typebox"
 import { FastifyReply, FastifyRequest } from "fastify"
 
 import { RequestRouteOptions } from "../../../../types/RouteOptions"
-import { RouteSchemaService, SchemaDirection } from "../services/RouteSchemaService"
-import { Schemas as DirectionSchemas } from "../schemas/directionSchema"
 import { Schemas as BusStopSchemas, BaseBusStopSchema } from "../schemas/busStopSchema"
-import { BaseBusStop, BusStop } from "../models/BusStop"
+import { BaseBusStop } from "../models/BusStop"
 import { ArrivalService } from "../services/ArrivalService"
 
 module RequestSchemas {
@@ -19,7 +17,6 @@ module RequestSchemas {
 	})
 	export const Querystring = Type.Object({
 		bus_line: Type.Number(),
-		direction: Type.Optional(DirectionSchemas.Direction),
 	})
 }
 
@@ -40,11 +37,9 @@ interface Request {
 }
 
 export async function busLineRouteSchema(req: FastifyRequest<Request>, res: FastifyReply) {
-	const { bus_line, direction } = req.query
+	const { bus_line } = req.query
 
-	const result = await ArrivalService.getRouteSchema(bus_line, direction)
-
-	console.log(result.map((busStops) => busStops.map(adaptBusStop)))
+	const result = await ArrivalService.getRouteSchema(bus_line)
 
 	res.code(200).send({ routes: result.map((busStops) => busStops.map(adaptBusStop)) })
 }

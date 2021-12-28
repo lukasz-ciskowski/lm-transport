@@ -18,8 +18,8 @@ module RequestSchemas {
 		connections: Type.Array(
 			Type.Object({
 				id: Type.Number(),
-				from: Type.String(),
-				to: Type.String(),
+				first_stop: Type.String(),
+				last_stop: Type.String(),
 				route_run: Type.Object({
 					id: Type.Number(),
 					bus_line: BusLineSchemas.BusLine,
@@ -70,8 +70,8 @@ function adapt(result: ArrivalByBusStop): Response[number] {
 	return {
 		id: result.Id,
 		arrival_time: result.ArrivalTime,
-		from: result.StartBusStop,
-		to: result.EndBusStop,
+		first_stop: result.FirstBusStop,
+		last_stop: result.LastBusStop,
 		route_run: {
 			id: result.RouteRun.Id,
 			decorator: result.RouteRun.RunDecoration

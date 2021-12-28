@@ -1,21 +1,22 @@
 import { BaseRepository } from "../../helpers/BaseRepository"
 import { parseDbToObject } from "../../helpers/dbObject"
 import { ArrivalByBusStop, ArrivalByRouteRun, AvailableBusStop } from "../models/Arrival"
-import { DirectionKeys } from "../models/RouteSchema"
+import { DirectionKeys } from "../models/RouteRun"
 
 class Repository extends BaseRepository {
 	public async getByBusStop(
 		busStopId: number,
 		scheduleId: number,
-		timeFrom: string
+		timeFrom: string,
+		direction?: DirectionKeys
 	): Promise<{ arrivals: ArrivalByBusStop[] }> {
-		const query = `
+		let query = `
 			SELECT
             A.Id, A.ArrivalTime,
 			RR.Id AS 'RouteRun.Id', RR.Direction AS 'RouteRun.Direction',
 			BL.Id AS 'RouteRun.BusLine.Id', BL.LineNumber AS 'RouteRun.BusLine.LineNumber',
 			RD.Id AS 'RouteRun.RunDecoration.Id', RD.Name AS 'RouteRun.RunDecoration.Name', RD.Prefix AS 'RouteRun.RunDecoration.Prefix',
-			F.StartBusStop, F.EndBusStop
+			F.FirstBusStop, F.LastBusStop
             FROM Arrivals AS A
 			LEFT JOIN RouteRuns RR ON RR.Id=RouteRunId
 			LEFT JOIN BusLines BL ON BL.Id=BusLineId
@@ -23,8 +24,8 @@ class Repository extends BaseRepository {
 			LEFT JOIN (
 				SELECT 
 				V.BusLineId, V.Direction,
-				MIN(CASE WHEN seqnum_asc = 1 THEN V.Name END) AS StartBusStop,
-				MIN(CASE WHEN seqnum_desc = 1 THEN V.Name END) AS EndBusStop
+				MIN(CASE WHEN seqnum_asc = 1 THEN V.Name END) AS FirstBusStop,
+				MIN(CASE WHEN seqnum_desc = 1 THEN V.Name END) AS LastBusStop
 				FROM (SELECT BS.Name, RR.Direction, RR.BusLineId,
 							row_number() OVER (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime asc) as seqnum_asc,
 							row_number() over (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime desc) as seqnum_desc
@@ -36,14 +37,20 @@ class Repository extends BaseRepository {
 				GROUP BY V.BusLineId, V.Direction
 			) F ON F.Direction=RR.Direction AND F.BusLineId=RR.BusLineId
             WHERE RR.ScheduleId=@ScheduleId AND A.BusStopId=@BusStopId AND A.ArrivalTime>=@ArrivalTime
-			ORDER BY A.ArrivalTime
 		`
+
+		if (direction !== undefined) {
+			query += " AND RR.Direction=@Direction"
+		}
+
+		query += " ORDER BY A.ArrivalTime"
 
 		const result = await this.db
 			.request()
 			.input("ScheduleId", scheduleId)
 			.input("BusStopId", busStopId)
 			.input("ArrivalTime", timeFrom)
+			.input("Direction", direction)
 			.query(query)
 
 		return { arrivals: result.recordset.map(parseDbToObject) }
@@ -61,7 +68,7 @@ class Repository extends BaseRepository {
 			RR.Id AS 'RouteRun.Id', RR.Direction AS 'RouteRun.Direction',
 			BL.Id AS 'RouteRun.BusLine.Id', BL.LineNumber AS 'RouteRun.BusLine.LineNumber',
 			RD.Id AS 'RouteRun.RunDecoration.Id', RD.Name AS 'RouteRun.RunDecoration.Name', RD.Prefix AS 'RouteRun.RunDecoration.Prefix',
-			F.StartBusStop, F.EndBusStop
+			F.FirstBusStop, F.LastBusStop
             FROM Arrivals AS A
 			LEFT JOIN RouteRuns RR ON RR.Id=RouteRunId
 			LEFT JOIN BusLines BL ON BL.Id=BusLineId
@@ -75,8 +82,8 @@ class Repository extends BaseRepository {
 			LEFT JOIN (
 				SELECT 
 				V.BusLineId, V.Direction,
-				MIN(CASE WHEN seqnum_asc = 1 THEN V.Name END) AS StartBusStop,
-				MIN(CASE WHEN seqnum_desc = 1 THEN V.Name END) AS EndBusStop
+				MIN(CASE WHEN seqnum_asc = 1 THEN V.Name END) AS FirstBusStop,
+				MIN(CASE WHEN seqnum_desc = 1 THEN V.Name END) AS LastBusStop
 				FROM (SELECT BS.Name, RR.Direction, RR.BusLineId,
 							row_number() OVER (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime asc) as seqnum_asc,
 							row_number() over (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime desc) as seqnum_desc
@@ -107,14 +114,9 @@ class Repository extends BaseRepository {
 		const result = await this.db.query`
             SELECT
             A.Id, A.ArrivalTime,
-			BS.Id AS 'RouteSchema.BusStop.Id', Bs.Name AS 'RouteSchema.BusStop.Name', BS.Street AS 'RouteSchema.BusStop.Street',
-			BS.City AS 'RouteSchema.BusStop.City', BS.PostCode as 'RouteSchema.BusStop.PostCode', BS.Lat as 'RouteSchema.BusStop.Lat', BS.Lon as 'RouteSchema.BusStop.Lon',
-			RR.Id AS 'RouteRun.Id'
+			BS.Id AS 'BusStop.Id', Bs.Name AS 'BusStop.Name'
             FROM Arrivals AS A
-			LEFT JOIN RouteSchemas RS ON RS.Id=RouteSchemaId
-			LEFT JOIN BusStops BS ON RS.BusStopId=BS.Id
-			LEFT JOIN RouteRuns RR ON A.RouteRunId=RR.Id
-			LEFT JOIN RunDecorations RD ON RR.RunDecorationId = RD.Id
+			LEFT JOIN BusStops BS ON A.BusStopId=BS.Id
 			WHERE A.RouteRunId=${routeRunId}
             ORDER BY A.ArrivalTime
         `
@@ -122,10 +124,7 @@ class Repository extends BaseRepository {
 		return { arrivals: result.recordset.map(parseDbToObject) }
 	}
 
-	public async getAllAvailableStops(
-		busLineId: number,
-		direction?: DirectionKeys
-	): Promise<{ stops: AvailableBusStop[] }> {
+	public async getAllAvailableStops(busLineId: number): Promise<{ stops: AvailableBusStop[] }> {
 		let query = `
 			SELECT T.BusStopId AS 'BusStop.Id', T.BusStopName AS 'BusStop.Name', T.Direction
 			FROM(
@@ -138,18 +137,12 @@ class Repository extends BaseRepository {
 				order by A.ArrivalTime OFFSET 0 ROWS
 			) T
 			WHERE T.BusLineId=@BusLine AND T.seqnum_asc=1
+			ORDER BY T.Direction, T.ArrivalTime
 		`
-
-		if (direction !== undefined) {
-			query += ` AND Direction=@Direction`
-		}
-
-		query += ` ORDER BY T.Direction, T.ArrivalTime`
 
 		const result = await this.db
 			.request()
 			.input("BusLine", busLineId)
-			.input("Direction", direction)
 			.query(query)
 
 		return { stops: result.recordset.map(parseDbToObject) }
