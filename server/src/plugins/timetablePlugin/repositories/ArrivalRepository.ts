@@ -27,8 +27,8 @@ class Repository extends BaseRepository {
 				MIN(CASE WHEN seqnum_asc = 1 THEN V.Name END) AS FirstBusStop,
 				MIN(CASE WHEN seqnum_desc = 1 THEN V.Name END) AS LastBusStop
 				FROM (SELECT BS.Name, RR.Direction, RR.BusLineId,
-							row_number() OVER (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime asc) as seqnum_asc,
-							row_number() over (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime desc) as seqnum_desc
+							row_number() OVER (partition by RR.Id order by A.ArrivalTime asc) as seqnum_asc,
+							row_number() over (partition by RR.Id order by A.ArrivalTime desc) as seqnum_desc
 					  from Arrivals A
 					  LEFT JOIN RouteRuns RR on RR.Id=RouteRunId
 					  LEFT JOIN BusStops BS on BS.Id=BusStopId
@@ -85,8 +85,8 @@ class Repository extends BaseRepository {
 				MIN(CASE WHEN seqnum_asc = 1 THEN V.Name END) AS FirstBusStop,
 				MIN(CASE WHEN seqnum_desc = 1 THEN V.Name END) AS LastBusStop
 				FROM (SELECT BS.Name, RR.Direction, RR.BusLineId,
-							row_number() OVER (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime asc) as seqnum_asc,
-							row_number() over (partition by RR.BusLineId, RR.Direction order by A.ArrivalTime desc) as seqnum_desc
+							row_number() OVER (partition by RR.Id order by A.ArrivalTime asc) as seqnum_asc,
+							row_number() over (partition by RR.Id order by A.ArrivalTime desc) as seqnum_desc
 					  from Arrivals A
 					  LEFT JOIN RouteRuns RR on RR.Id=RouteRunId
 					  LEFT JOIN BusStops BS on BS.Id=BusStopId
@@ -146,6 +146,27 @@ class Repository extends BaseRepository {
 			.query(query)
 
 		return { stops: result.recordset.map(parseDbToObject) }
+	}
+
+	public async getLongestRunInMinutes(busLineId: number): Promise<{ minutes: number }> {
+		const result = await this.db.query`
+			SELECT TOP 1
+			DATEDIFF(MINUTE, MIN(case when v.seqnum_asc = 1 then v.ArrivalTime end), MIN(case when seqnum_desc = 1 then v.ArrivalTime end)) as 'Minutes'
+			FROM 
+				(SELECT
+					RR.Id, A.ArrivalTime,
+					row_number() OVER (PARTITION BY RR.Id ORDER BY A.ArrivalTime ASC) AS seqnum_asc,
+					row_number() OVER (PARTITION BY RR.Id ORDER BY A.ArrivalTime DESC) AS seqnum_desc
+				FROM Arrivals A
+				LEFT JOIN RouteRuns RR ON RR.Id=RouteRunId
+				WHERE RR.BusLineId=${busLineId}
+				) v
+			WHERE seqnum_asc = 1 OR seqnum_desc = 1
+			GROUP BY v.Id
+			ORDER BY Length DESC
+		`
+
+		return { minutes: result.recordset[0].Minutes }
 	}
 }
 

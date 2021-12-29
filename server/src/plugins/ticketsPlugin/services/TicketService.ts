@@ -6,6 +6,7 @@ import { Discount } from "../models/Discount"
 import { TicketType } from "../models/TicketType"
 import { TicketRepository } from "../repositories/TicketRepository"
 import moment from "moment"
+import { ArrivalRepository } from "../../timetablePlugin/repositories/ArrivalRepository"
 
 type Filters = { active?: boolean }
 class Service {
@@ -30,10 +31,10 @@ class Service {
 				.add(ticketType.StaticDuration, "hours")
 				.endOf("D")
 				.toDate()
-		} else {
-			// temporary solution - TODO calculate max length of single busline journey
+		} else if (busLine) {
+			const longestRun = await ArrivalRepository.getLongestRunInMinutes(busLine.Id)
 			estimatedStartDate = startDate
-			estimatedEndDate = moment(startDate).add(4, "hours").toDate()
+			estimatedEndDate = moment(startDate).add(longestRun.minutes, "minutes").toDate()
 		}
 
 		if (!estimatedStartDate || !estimatedEndDate) throw internal("Date parsing error")

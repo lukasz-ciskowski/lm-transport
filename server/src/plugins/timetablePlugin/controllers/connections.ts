@@ -32,7 +32,7 @@ module RequestSchemas {
 	export const QueryString = Type.Object({
 		from_bus_stop: Type.Number(),
 		to_bus_stop: Type.Number(),
-		date: Type.String({ format: "date-time" }),
+		date: Type.String({ format: "date-time", default: new Date().toISOString() }),
 	})
 }
 

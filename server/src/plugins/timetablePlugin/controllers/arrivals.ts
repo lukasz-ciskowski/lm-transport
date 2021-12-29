@@ -27,7 +27,7 @@ module RequestSchemas {
 	})
 	export const QueryString = Type.Object({
 		bus_stop: Type.Number(),
-		date: Type.String({ format: "date-time" }),
+		date: Type.String({ format: "date-time", default: new Date().toISOString() }),
 		direction: Type.Optional(DirectionSchemas.Direction),
 	})
 }
