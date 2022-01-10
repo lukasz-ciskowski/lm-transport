@@ -9,6 +9,7 @@ export const Head = styled.header`
 export const HeadContent = styled.nav`
 	max-width: 1400px;
 	margin: 0 auto;
+	padding: 0 ${theme.spacing(4)};
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -29,5 +30,5 @@ export const NavSubtitle = styled.b`
 export const Content = styled.main`
 	max-width: 1400px;
 	margin: 0 auto;
-	padding: ${theme.spacing(2)} 0;
+	padding: ${theme.spacing(4)};
 `
