@@ -6,7 +6,7 @@ export async function getBusStops(): Promise<BusStopsResponse> {
 		bus_stops: [
 			{
 				id: 1,
-				name: "a",
+				name: "Galeria bałtycka",
 				street: "a",
 				post_code: "1",
 				city: "a",

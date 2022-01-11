@@ -18,5 +18,5 @@ export const Title = styled(Typography)`
 `
 
 export const FormContent = styled.div`
-	padding: ${theme.spacing(6)} 0;
+	padding: ${theme.spacing(6)} 0 0;
 `
