@@ -1,10 +1,10 @@
 import axios from "axios"
 import moment from "moment"
-import { ArrivalsResponse, BusStopSearchForm } from "./types"
+import { BusConnectionForm, ConnectionsResponse } from "./types"
 
-export async function findArrivals(data: BusStopSearchForm): Promise<ArrivalsResponse> {
+export async function findConnections(data: BusConnectionForm): Promise<ConnectionsResponse> {
 	return {
-		arrivals: [
+		connections: [
 			{
 				id: 1,
 				first_stop: "Wrzeszcz",
@@ -22,7 +22,8 @@ export async function findArrivals(data: BusStopSearchForm): Promise<ArrivalsRes
 	}
 	// const result = await axios.get("/api/timetable/arrivals", {
 	// 	params: {
-	// 		bus_stop: data.busStopId,
+	// 		from_bus_stop: data.fromBusStopId,
+	// 		to_bus_stop: data.toBusStopId,
 	// 		date: moment(data.date)
 	// 			.hours(data.time.getHours())
 	// 			.minutes(data.time.getMinutes())

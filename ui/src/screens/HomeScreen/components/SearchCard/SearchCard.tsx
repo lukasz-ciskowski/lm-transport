@@ -7,6 +7,7 @@ import Route from "@mui/icons-material/Route"
 import BusStopSearch from "./components/BusStopSearch"
 import { useQuery } from "react-query"
 import { getBusStops } from "screens/HomeScreen/api"
+import BusConnectionSearch from "./components/BusConnectionSearch"
 
 function SearchCard() {
 	const [tabValue, setTabValue] = useState(T.Tabs.ByBusStop)
@@ -27,6 +28,9 @@ function SearchCard() {
 						<S.FormContent>
 							{tabValue === T.Tabs.ByBusStop && (
 								<BusStopSearch busStops={busStopsData.bus_stops} />
+							)}
+							{tabValue === T.Tabs.ByConnection && (
+								<BusConnectionSearch busStops={busStopsData.bus_stops} />
 							)}
 						</S.FormContent>
 					)}

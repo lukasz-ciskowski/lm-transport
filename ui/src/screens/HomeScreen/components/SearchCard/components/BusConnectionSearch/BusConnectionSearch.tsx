@@ -4,7 +4,7 @@ import BusStopSelect from "components/BusStopSelect"
 import { Controller, useForm } from "react-hook-form"
 import { useMutation } from "react-query"
 import { BusStop } from "screens/HomeScreen/types"
-import { findArrivals } from "./api"
+import { findConnections } from "./api"
 import * as T from "./types"
 import * as S from "./styles"
 import LinesResult from "../LinesResult"
@@ -17,18 +17,18 @@ interface Props {
 
 const REQUEST_INTERVAL = moment.duration({ minutes: 1 }).as("milliseconds")
 
-function BusStopSearch({ busStops }: Props) {
-	const { control, handleSubmit, formState, watch } = useForm<T.BusStopSearchForm>({
+function BusConnectionSearch({ busStops }: Props) {
+	const { control, handleSubmit, formState, watch } = useForm<T.BusConnectionForm>({
 		mode: "onChange",
 		defaultValues: {
 			date: new Date(),
 			time: new Date(),
 		},
 	})
-	const { data, mutate, isLoading } = useMutation(findArrivals)
+	const { data, mutate, isLoading } = useMutation(findConnections)
 	const interval = useRef<NodeJS.Timer>()
 
-	const onSubmit = (data: T.BusStopSearchForm) => {
+	const onSubmit = (data: T.BusConnectionForm) => {
 		if (interval.current) clearInterval(interval.current)
 		interval.current = setInterval(() => {
 			mutate(data)
@@ -40,22 +40,39 @@ function BusStopSearch({ busStops }: Props) {
 		if (interval.current) clearInterval(interval.current)
 	}, [])
 
-	const [busStopId, date] = watch(["busStopId", "date"])
-	const selectedBusStop = busStops.find((busStop) => busStop.id === busStopId)
+	const [fromBusStopId, toBusStopId, date] = watch(["fromBusStopId", "toBusStopId", "date"])
+	const selectedBusStopFrom = busStops.find((busStop) => busStop.id === fromBusStopId)
 	return (
 		<>
 			<S.Form onSubmit={handleSubmit(onSubmit)}>
 				<Grid container spacing={5}>
 					<Grid item container xs={12}>
 						<Controller
-							name="busStopId"
+							name="fromBusStopId"
 							control={control}
 							rules={{ required: true }}
 							render={({ field }) => (
 								<BusStopSelect
-									label="Znajdź przystanek"
+									label="Skąd"
 									size="small"
-									data={busStops}
+									data={busStops.filter((busStop) => busStop.id !== toBusStopId)}
+									{...field}
+								/>
+							)}
+						/>
+					</Grid>
+					<Grid item container xs={12}>
+						<Controller
+							name="toBusStopId"
+							control={control}
+							rules={{ required: true }}
+							render={({ field }) => (
+								<BusStopSelect
+									label="Dokąd"
+									size="small"
+									data={busStops.filter(
+										(busStop) => busStop.id !== fromBusStopId
+									)}
 									{...field}
 								/>
 							)}
@@ -113,17 +130,17 @@ function BusStopSearch({ busStops }: Props) {
 				</Grid>
 			</S.Form>
 			<S.Result>
-				{
-					isLoading && <Grid container xs={12} justifyContent="center">
+				{isLoading && (
+					<Grid container xs={12} justifyContent="center">
 						<CircularProgress />
 					</Grid>
-				}
-				{data && selectedBusStop && (
+				)}
+				{data && selectedBusStopFrom && (
 					<>
 						<Divider />
 						<LinesResult
-							arrivals={data.arrivals}
-							busStop={selectedBusStop}
+							arrivals={data.connections}
+							busStop={selectedBusStopFrom}
 							date={date}
 						/>
 					</>
@@ -133,4 +150,4 @@ function BusStopSearch({ busStops }: Props) {
 	)
 }
 
-export default BusStopSearch
+export default BusConnectionSearch

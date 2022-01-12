@@ -11,3 +11,10 @@ export const EndBusStopWrapper = styled.div`
 export const TicketButton = styled.div`
 	margin-left: ${theme.spacing(2)};
 `
+
+export const DurationOutput = styled.b`
+	display: block;
+	&::first-letter {
+		text-transform: uppercase;
+	}
+`

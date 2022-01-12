@@ -53,14 +53,7 @@ function LinesResult({ arrivals, busStop, date }: Props) {
 						</Grid>
 						<Grid item xs={4} container justifyContent="flex-end" alignItems="center">
 							<Typography variant="subtitle1">
-								<b>
-									Za{" "}
-									{humanizeDuration(arrival.interval, {
-										language: "pl",
-										units: ["d", "h", "m"],
-										round: true,
-									})}
-								</b>
+								<S.DurationOutput>{moment.duration(arrival.interval).humanize(true)}</S.DurationOutput>
 							</Typography>
 							<S.TicketButton>
 								<IconButton>
