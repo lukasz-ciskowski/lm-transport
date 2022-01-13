@@ -7,7 +7,7 @@ interface Props {
 }
 
 function GlobalContextProvider({ children }: Props) {
-	const [state, setState] = useState<GlobalState | undefined>(undefined)
+	const [state, setState] = useState<GlobalState>({ busLines: [] })
 
 	const handleSetData = useCallback((data: GlobalState) => setState(data), [])
 

@@ -10,11 +10,7 @@ export const Content = styled.div`
 		min-height: unset;
 	}
 	padding: ${theme.spacing(2)};
-`
-
-export const Title = styled(Typography)`
-	padding-bottom: ${theme.spacing(2)};
-	font-weight: 500;
+	padding-top: 0;
 `
 
 export const FormContent = styled.div`

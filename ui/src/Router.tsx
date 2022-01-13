@@ -11,7 +11,6 @@ function Router() {
 				<Layout>
 					<Routes>
 						<Route path={HOME} element={<HomeScreen />} />
-						<Route path="*" element={<p>Nic tu nie ma 🤔</p>} />
 					</Routes>
 				</Layout>
 			</SplashScreen>

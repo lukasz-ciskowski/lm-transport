@@ -1,4 +1,4 @@
-import { Card, CardContent, Tab, Tabs } from "@mui/material"
+import { Card, CardContent, CardHeader, Tab, Tabs } from "@mui/material"
 import { useState } from "react"
 import * as T from "./types"
 import * as S from "./styles"
@@ -18,8 +18,8 @@ function SearchCard() {
 	return (
 		<Card>
 			<CardContent>
+				<CardHeader titleTypographyProps={{ sx: { fontWeight: "500" } }} title="Znajdź" />
 				<S.Content>
-					<S.Title variant="h5">Znajdź</S.Title>
 					<Tabs value={tabValue} onChange={handleChangeTab}>
 						<Tab icon={<Marker />} iconPosition="start" label="Przystanek" />
 						<Tab icon={<Route />} iconPosition="start" label="Połączenie" />

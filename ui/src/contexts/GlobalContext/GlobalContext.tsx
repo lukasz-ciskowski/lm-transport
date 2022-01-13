@@ -5,7 +5,7 @@ export interface GlobalState {
 	busLines: SingleBusLine[]
 }
 
-export const GlobalContextState = createContext<GlobalState | undefined>(undefined)
+export const GlobalContextState = createContext<GlobalState>({ busLines: [] })
 
 interface Dispatcher {
 	loadAll: (data: GlobalState) => void
