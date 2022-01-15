@@ -14,12 +14,12 @@ export const HeadContent = styled.nav`
 	align-items: center;
 	justify-content: space-between;
 	height: 100%;
+	cursor: pointer;
 `
 
 export const LogoContent = styled.div`
 	display: flex;
 	align-items: center;
-    cursor: pointer;
 	gap: ${theme.spacing(3)};
 `
 

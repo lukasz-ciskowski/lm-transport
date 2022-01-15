@@ -5,8 +5,8 @@ export const Box = styled.div`
 	width: 30px;
 	height: 30px;
 	border: 1px solid ${theme.palette.common.black};
+	background-color: ${theme.palette.grey[300]};
 	border-radius: 5px;
-	background-color: ${theme.palette.grey[200]};
 	display: flex;
 	align-items: center;
 	justify-content: center;

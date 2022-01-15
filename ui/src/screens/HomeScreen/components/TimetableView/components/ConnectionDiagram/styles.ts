@@ -7,6 +7,10 @@ interface ConnectionProps {
 	totalSize: number
 }
 
+interface ConnectionTextProps extends ConnectionProps {
+	selectedIndex: number | undefined
+}
+
 export const ConnectionImg = styled.img.attrs((props: ConnectionProps) => {
 	if (props.index === 0) return { src: "/images/connection-top.svg" }
 	if (props.index === props.totalSize - 2) return { src: "/images/connection-pre-last.svg" }
@@ -56,17 +60,22 @@ export const ConnectionImg = styled.img.attrs((props: ConnectionProps) => {
 	}};
 `
 
-export const ConnectionText = styled(Typography)<ConnectionProps>`
+export const ConnectionText = styled(Typography)<ConnectionTextProps>`
 	${(props) => {
-		console.log(props.index)
-
+		if (props.selectedIndex !== undefined) {
+			if (props.selectedIndex === props.index)
+				return css`
+					font-weight: 500 !important;
+				`
+			else return ""
+		}
 		if (props.index === 0 || props.index === props.totalSize - 1)
 			return css`
 				font-weight: 500 !important;
 			`
 		return ` `
 	}};
-    transition: 200ms color;
+	transition: 200ms color;
 	&:hover {
 		color: ${theme.palette.primary.main};
 		cursor: pointer;
@@ -76,5 +85,5 @@ export const ConnectionText = styled(Typography)<ConnectionProps>`
 export const ConnectionsBox = styled.div`
 	display: flex;
 	gap: ${theme.spacing(5)};
-	width: 300px;
+	width: 200px;
 `

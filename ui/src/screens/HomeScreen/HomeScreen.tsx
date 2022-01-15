@@ -1,11 +1,13 @@
 import { Grid } from "@mui/material"
+import { Route, Routes } from "react-router-dom"
+import { TIMETABLE } from "urls"
 import BusLinesCard from "./components/BusLinesCard"
 import BoxSearch from "./components/SearchCard"
 import TimetableView from "./components/TimetableView"
 
 function HomeScreen() {
 	return (
-		<Grid container spacing={12}>
+		<Grid container gap={12}>
 			<Grid item container justifyContent="space-between">
 				<Grid item xs={6}>
 					<BoxSearch />
@@ -15,7 +17,9 @@ function HomeScreen() {
 				</Grid>
 			</Grid>
 			<Grid item container xs={12}>
-				<TimetableView />
+				<Routes>
+					<Route path={TIMETABLE} element={<TimetableView />} />
+				</Routes>
 			</Grid>
 		</Grid>
 	)

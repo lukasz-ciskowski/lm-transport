@@ -11,9 +11,8 @@ export const TitleText = styled.div`
 `
 
 export const BusLinesGrid = styled.div`
-	display: grid;
-	grid-template-rows: repeat(auto-fill, 35px);
-	grid-template-columns: repeat(auto-fill, 35px);
+	display: flex;
+	flex-wrap: nowrap;
 	gap: ${theme.spacing(3)};
 `
 

@@ -7,3 +7,8 @@ export interface RouteSchemasResponse {
 		[Directions.Backwards, Array<Pick<BusStop, "id" | "name">>]
 	]
 }
+
+export interface TimetableBaseProps {
+	initializing: boolean
+	schemas: RouteSchemasResponse | undefined
+}
