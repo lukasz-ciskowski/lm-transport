@@ -6,4 +6,7 @@ export default createGlobalStyle`
         text-decoration: none;
         display: flex; 
     }
+    .MuiButton-root {
+        line-height: 1.5 !important;
+    }
 `

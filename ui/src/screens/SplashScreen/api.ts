@@ -1,7 +1,17 @@
 import axios from "axios"
-import { BusLinesResult } from "./types"
+import { BusLinesResult, RefreshResult } from "./types"
 
-export const refresh = () => axios.post("/api/refresh")
+export const refresh = async (): Promise<RefreshResult> => {
+	return {
+		login: "luksik",
+		first_name: "lukasz",
+		last_name: "lukasz",
+		card_number: "luki",
+	}
+
+	// const result = await axios.post("/api/refresh")
+	// return result.data
+}
 
 export async function getBusLines(): Promise<BusLinesResult> {
 	return {

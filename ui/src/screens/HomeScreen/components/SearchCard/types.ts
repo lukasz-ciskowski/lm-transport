@@ -1,4 +1,4 @@
-export enum Tabs {
+export enum TabValues {
 	ByBusStop,
 	ByConnection,
 }

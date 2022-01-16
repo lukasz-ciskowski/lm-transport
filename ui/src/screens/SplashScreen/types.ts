@@ -1,4 +1,4 @@
-import { SingleBusLine } from "contexts/GlobalContext/types";
+import { SingleBusLine } from "contexts/GlobalContext/types"
 
 export interface RefreshResult {
 	login: string

@@ -2,7 +2,7 @@ import { ArrowBack } from "@mui/icons-material"
 import { IconButton, Typography } from "@mui/material"
 import { Directions } from "common/Directions"
 import { useRouterQuery } from "hooks/useRouterQuery"
-import { Link, Path, useNavigate, useParams } from "react-router-dom"
+import { Link, Path, useParams } from "react-router-dom"
 import { TimetableBaseProps } from "../../types"
 import ConnectionDiagram from "../ConnectionDiagram"
 import * as S from "./styles"
@@ -12,7 +12,6 @@ type Props = Pick<TimetableBaseProps, "schemas"> & { prevRoute: Partial<Path> }
 type Params = { bus_line: string; bus_stop: string }
 
 function SidePanel({ schemas, prevRoute }: Props) {
-	const navigate = useNavigate()
 	const { bus_line, bus_stop } = useParams<Params>()
 	const query = useRouterQuery()
 

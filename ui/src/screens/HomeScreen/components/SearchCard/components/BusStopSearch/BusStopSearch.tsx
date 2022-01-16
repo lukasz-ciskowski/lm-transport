@@ -5,11 +5,11 @@ import { Controller, useForm } from "react-hook-form"
 import { useMutation } from "react-query"
 import { BusStop } from "screens/HomeScreen/types"
 import { findArrivals } from "./api"
-import * as T from "./types"
 import * as S from "./styles"
 import LinesResult from "../LinesResult"
 import moment from "moment"
 import { useEffect, useRef } from "react"
+import { BusStopSearchForm } from "./types"
 
 interface Props {
 	busStops: BusStop[]
@@ -18,7 +18,7 @@ interface Props {
 const REQUEST_INTERVAL = moment.duration({ minutes: 1 }).as("milliseconds")
 
 function BusStopSearch({ busStops }: Props) {
-	const { control, handleSubmit, formState, watch } = useForm<T.BusStopSearchForm>({
+	const { control, handleSubmit, formState, watch } = useForm<BusStopSearchForm>({
 		mode: "onChange",
 		defaultValues: {
 			date: new Date(),
@@ -28,7 +28,7 @@ function BusStopSearch({ busStops }: Props) {
 	const { data, mutate, isLoading } = useMutation(findArrivals)
 	const interval = useRef<NodeJS.Timer>()
 
-	const onSubmit = (data: T.BusStopSearchForm) => {
+	const onSubmit = (data: BusStopSearchForm) => {
 		if (interval.current) clearInterval(interval.current)
 		interval.current = setInterval(() => {
 			mutate(data)
