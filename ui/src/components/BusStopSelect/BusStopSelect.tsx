@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectProps } from "@mui/material"
-import { BusStop } from "screens/HomeScreen/types"
+import { BusStop } from "models/busStop"
 
 type Props = SelectProps & { data: BusStop[] }
 

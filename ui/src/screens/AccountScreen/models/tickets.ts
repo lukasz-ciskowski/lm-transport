@@ -1,4 +1,4 @@
-import { SingleBusLine } from "contexts/GlobalContext/types"
+import { SingleBusLine } from "models/busLine"
 
 export interface Ticket {
 	id: number

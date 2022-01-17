@@ -1,11 +1,12 @@
 import { useQuery } from "react-query"
 import * as S from "./styles"
 import { getBusLines, refresh } from "./api"
-import { BusLinesResult, RefreshResult } from "./types"
+import { BusLinesResult } from "./types"
 import { AxiosError } from "axios"
 import { useAuthDispatcher } from "contexts/AuthContext/hooks"
 import { useGlobalDispatch } from "contexts/GlobalContext/hooks"
 import { Alert } from "@mui/material"
+import { User } from "models/user"
 
 interface Props {
 	children: React.ReactNode
@@ -16,7 +17,7 @@ function SplashScreen({ children }: Props) {
 	const globalState = useGlobalDispatch()
 
 	const { isLoading: authLoading } = useQuery("refresh", refresh, {
-		onSuccess: (response: RefreshResult) => {
+		onSuccess: (response: User) => {
 			auth.logIn({
 				login: response.login,
 				firstName: response.first_name,

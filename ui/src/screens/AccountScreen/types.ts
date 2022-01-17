@@ -1,4 +1,4 @@
-import { SingleBusLine } from "contexts/GlobalContext/types";
+import { SingleBusLine } from "models/busLine";
 import React from "react"
 
 export interface MenuItem {

@@ -1,9 +1,9 @@
 import { Grid } from "@mui/material"
 import { Route, Routes } from "react-router-dom"
 import { TIMETABLE } from "urls"
-import BusLinesCard from "./components/BusLinesCard"
-import BoxSearch from "./components/SearchCard"
-import TimetableView from "./components/TimetableView"
+import BusLinesCard from "./views/BusLinesCard"
+import BoxSearch from "./views/SearchCard"
+import TimetableView from "./views/TimetableView"
 
 function HomeScreen() {
 	return (

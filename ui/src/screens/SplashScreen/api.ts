@@ -1,7 +1,8 @@
 import axios from "axios"
-import { BusLinesResult, RefreshResult } from "./types"
+import { User } from "models/user"
+import { BusLinesResult } from "./types"
 
-export const refresh = async (): Promise<RefreshResult> => {
+export const refresh = async (): Promise<User> => {
 	return {
 		login: "luksik",
 		first_name: "lukasz",

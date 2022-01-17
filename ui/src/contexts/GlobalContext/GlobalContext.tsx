@@ -1,5 +1,5 @@
 import { createContext } from "react"
-import { SingleBusLine } from "./types"
+import { SingleBusLine } from "../../models/busLine"
 
 export interface GlobalState {
 	busLines: SingleBusLine[]
