@@ -14,7 +14,7 @@ function LoginScreen() {
 
 	const handleChangeTab = (_: React.SyntheticEvent, tab: TabValues) => setTabValue(tab)
 
-	// if (auth.state === "logged") return <Navigate to={ACCOUNT} />
+	if (auth.state === "logged") return <Navigate to={ACCOUNT} />
 	return (
 		<S.Layout>
 			<Card>

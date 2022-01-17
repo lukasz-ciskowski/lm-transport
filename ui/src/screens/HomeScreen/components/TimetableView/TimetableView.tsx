@@ -1,7 +1,6 @@
 import { useQuery } from "react-query"
 import { Route, Routes, useParams } from "react-router-dom"
-import { BUS_LINE, TIMETABLE, TIMETABLE_BUS_STOP } from "urls"
-import { relativePath } from "utils/relativePath"
+import { TIMETABLE, BUS_STOP } from "urls"
 import { getSchema } from "./api"
 import BusLineView from "./components/BusLineView"
 import BusStopContainer from "./components/BusStopContainer"
@@ -16,12 +15,9 @@ export default function TimetableView() {
 	return (
 		<S.CardBox>
 			<Routes>
+				<Route index element={<BusLineView initializing={isLoading} schemas={data} />} />
 				<Route
-					path={relativePath(BUS_LINE, TIMETABLE)}
-					element={<BusLineView initializing={isLoading} schemas={data} />}
-				/>
-				<Route
-					path={relativePath(TIMETABLE_BUS_STOP, TIMETABLE)}
+					path={`${BUS_STOP}/*`}
 					element={<BusStopContainer initializing={isLoading} schemas={data} />}
 				/>
 			</Routes>

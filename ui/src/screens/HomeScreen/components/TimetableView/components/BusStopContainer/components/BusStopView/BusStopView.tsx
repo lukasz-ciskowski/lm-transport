@@ -8,7 +8,7 @@ import qs from "qs"
 import { useEffect, useState } from "react"
 import { useMutation } from "react-query"
 import { generatePath, Link, useParams } from "react-router-dom"
-import { BUS_LINE, ROUTE_RUN } from "urls"
+import { ROUTE_RUN, TIMETABLE } from "urls"
 import SidePanel from "../../../SidePanel"
 import { BusStopContainerBaseProps } from "../../types"
 import { getRouteArrivals } from "./api"
@@ -51,7 +51,7 @@ function BusStopView({ initializing, schemas, busStop }: Props) {
 				<SidePanel
 					schemas={schemas}
 					prevRoute={{
-						pathname: generatePath(BUS_LINE, {
+						pathname: generatePath(TIMETABLE, {
 							bus_line,
 						}),
 					}}

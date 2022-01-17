@@ -18,7 +18,7 @@ function HomeScreen() {
 			</Grid>
 			<Grid item container xs={12}>
 				<Routes>
-					<Route path={TIMETABLE} element={<TimetableView />} />
+					<Route path={`${TIMETABLE}/*`} element={<TimetableView />} />
 				</Routes>
 			</Grid>
 		</Grid>

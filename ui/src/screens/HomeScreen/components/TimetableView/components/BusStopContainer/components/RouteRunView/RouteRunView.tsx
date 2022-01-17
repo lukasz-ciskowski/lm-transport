@@ -6,7 +6,7 @@ import qs from "qs"
 import { useQuery } from "react-query"
 import { generatePath, Link, useParams } from "react-router-dom"
 import { theme } from "styles/theme"
-import { BUS_STOP } from "urls"
+import { BUS_STOP, TIMETABLE } from "urls"
 import SidePanel from "../../../SidePanel"
 import { BusStopContainerBaseProps } from "../../types"
 import { getRouteRun } from "./api"
@@ -38,7 +38,7 @@ function RouteRunView({ initializing, schemas, busStop }: Props) {
 				<SidePanel
 					schemas={schemas}
 					prevRoute={{
-						pathname: generatePath(BUS_STOP, {
+						pathname: generatePath(`${TIMETABLE}/${BUS_STOP}`, {
 							bus_line,
 							bus_stop,
 						}),
@@ -80,7 +80,7 @@ function RouteRunView({ initializing, schemas, busStop }: Props) {
 								<Grid item xs={4}>
 									<Link
 										to={{
-											pathname: generatePath(BUS_STOP, {
+											pathname: generatePath(`${TIMETABLE}/${BUS_STOP}`, {
 												bus_line,
 												bus_stop: arrival.bus_stop.id.toString(),
 											}),

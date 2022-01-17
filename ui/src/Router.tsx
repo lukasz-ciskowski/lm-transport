@@ -4,7 +4,7 @@ import AccountScreen from "screens/AccountScreen"
 import HomeScreen from "screens/HomeScreen"
 import LoginScreen from "screens/LoginScreen"
 import SplashScreen from "./screens/SplashScreen"
-import { ACCOUNT_PAGE, LOGIN, MAIN } from "./urls"
+import { ACCOUNT, HOME, LOGIN } from "./urls"
 
 function Router() {
 	return (
@@ -12,9 +12,9 @@ function Router() {
 			<SplashScreen>
 				<Layout>
 					<Routes>
-						<Route path={ACCOUNT_PAGE} element={<AccountScreen />} />
+						<Route path={`${ACCOUNT}*`} element={<AccountScreen />} />
 						<Route path={LOGIN} element={<LoginScreen />} />
-						<Route path={MAIN} element={<HomeScreen />} />
+						<Route path={`${HOME}*`} element={<HomeScreen />} />
 					</Routes>
 				</Layout>
 			</SplashScreen>
