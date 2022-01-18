@@ -4,11 +4,10 @@ import {
 	KeyboardArrowDown,
 	KeyboardArrowUp,
 } from "@mui/icons-material"
-import { Button, Divider, Grid, Paper, Typography } from "@mui/material"
-import { Box } from "@mui/system"
+import { Button, Grid, Paper, Typography } from "@mui/material"
 import LabelBox from "components/LabelBox/LabelBox"
 import moment from "moment"
-import React, { useState } from "react"
+import { useState } from "react"
 import { useMutation } from "react-query"
 import { Ticket } from "screens/AccountScreen/models/tickets"
 import { getTicketDetails } from "./api"
@@ -74,7 +73,7 @@ function SingleTicket({ ticket }: Props) {
 								<DirectionsBus fontSize="large" />
 							</Grid>
 						</Grid>
-						<Grid item container xs={12} justifyContent="space-between">
+						<Grid item container xs={12} justifyContent="space-between" alignItems="center">
 							{datesInput.day && (
 								<Grid item xs="auto">
 									<Typography variant="body2">
@@ -101,11 +100,10 @@ function SingleTicket({ ticket }: Props) {
 								</Grid>
 							)}
 							<Button
-								variant="contained"
-								size="small"
+								variant="outlined"
 								endIcon={!showDetails ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
 								onClick={handleSeeDetails}
-								style={{ width: 150 }}
+								style={{ width: 150, height: "fit-content" }}
 							>
 								{!showDetails ? "Szczegóły" : "Ukryj"}
 							</Button>

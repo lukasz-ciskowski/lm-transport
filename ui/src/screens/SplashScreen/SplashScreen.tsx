@@ -1,12 +1,13 @@
 import { useQuery } from "react-query"
 import * as S from "./styles"
-import { getBusLines, refresh } from "./api"
+import { getBusLines, getDiscounts, getTicketTypes, refresh } from "./api"
 import { BusLinesResult } from "./types"
 import { AxiosError } from "axios"
 import { useAuthDispatcher } from "contexts/AuthContext/hooks"
 import { useGlobalDispatch } from "contexts/GlobalContext/hooks"
 import { Alert } from "@mui/material"
 import { User } from "models/user"
+import { useEffect } from "react"
 
 interface Props {
 	children: React.ReactNode
@@ -31,11 +32,33 @@ function SplashScreen({ children }: Props) {
 			}
 		},
 	})
-	const { isLoading, isError } = useQuery("bus-lines", getBusLines, {
-		onSuccess: (response: BusLinesResult) => {
-			globalState.loadAll({ busLines: response.bus_lines })
-		},
-	})
+	const {
+		isLoading: busLinesLoading,
+		isError: busLineError,
+		data: busLines,
+	} = useQuery("bus-lines", getBusLines)
+	const {
+		isLoading: discountsLoading,
+		isError: discountError,
+		data: discounts,
+	} = useQuery("discounts", getDiscounts)
+	const {
+		isLoading: ticketTypesLoading,
+		isError: ticketTypeError,
+		data: ticketTypes,
+	} = useQuery("ticket-types", getTicketTypes)
+
+	const isLoading = busLinesLoading || discountsLoading || ticketTypesLoading
+	const isError = busLineError || discountError || ticketTypeError
+
+	useEffect(() => {
+		if (ticketTypes && busLines && discounts)
+			globalState.loadAll({
+				busLines: busLines.bus_lines,
+				discounts: discounts.discounts,
+				ticketTypes: ticketTypes.ticket_types,
+			})
+	}, [busLines, discounts, globalState, ticketTypes])
 
 	if (isError) return <Alert severity="error">Nie można wyświetlić zawartosci strony</Alert>
 	if (isLoading || authLoading) return <S.Splash />

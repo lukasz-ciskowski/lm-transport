@@ -1,42 +1,33 @@
-import { ShoppingCart } from "@mui/icons-material"
-import { Button, CircularProgress, Grid, Pagination, Typography } from "@mui/material"
+import { CircularProgress, Grid, Pagination, Typography } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import { useMutation, useQuery } from "react-query"
-import BuyTicketModal from "screens/AccountScreen/components/BuyTicketModal"
 import SingleTicket from "screens/AccountScreen/components/SingleTicket"
-import { queryActiveTickets } from "./api"
+import { queryHistoricalTickets } from "./api"
 import * as S from "./styles"
 
 const PAGE_SIZE = 10
 
 function Tickets() {
-	const { data, isLoading, mutate } = useMutation(queryActiveTickets)
+	const { data, isLoading, mutate } = useMutation(queryHistoricalTickets)
 	const [page, setPage] = useState(1)
-	const [modalOpen, setModalOpen] = useState(false)
 
 	useEffect(() => {
 		mutate({ page, page_size: PAGE_SIZE })
 	}, [mutate, page])
 
-	const handleCloseModal = () => setModalOpen(false)
-	const handleOpenModal = () => setModalOpen(true)
-
 	const handleSwitchPage = (_: React.ChangeEvent<unknown>, p: number) => setPage(p)
+
+	if (isLoading)
+		return (
+			<Grid container xs={12} justifyContent="center">
+				<CircularProgress />
+			</Grid>
+		)
 
 	return (
 		<S.Wrapper>
-			{modalOpen && <BuyTicketModal onClose={handleCloseModal} />}
 			<S.Header>
-				<Grid container justifyContent="space-between">
-					<Typography variant="h6">Aktywne bilety</Typography>
-					<Button
-						startIcon={<ShoppingCart />}
-						variant="contained"
-						onClick={handleOpenModal}
-					>
-						Zakup bilet
-					</Button>
-				</Grid>
+				<Typography variant="h6">Historia biletów</Typography>
 			</S.Header>
 			{isLoading && (
 				<Grid container xs={12} justifyContent="center">

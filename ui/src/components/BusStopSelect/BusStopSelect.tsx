@@ -6,7 +6,7 @@ type Props = SelectProps & { data: BusStop[] }
 function BusStopSelect({ data, ...props }: Props) {
 	return (
 		<FormControl fullWidth size={props.size}>
-			<InputLabel id="demo-simple-select-label">{props.label}</InputLabel>
+			<InputLabel>{props.label}</InputLabel>
 			<Select {...props}>
 				{data.map((element) => (
 					<MenuItem value={element.id}>{element.name}</MenuItem>

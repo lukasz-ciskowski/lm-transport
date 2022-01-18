@@ -6,7 +6,7 @@ interface QueryRequest {
 	page_size: number
 }
 
-export const queryActiveTickets = async (query: QueryRequest): Promise<TicketsResponse> => {
+export const queryHistoricalTickets = async (query: QueryRequest): Promise<TicketsResponse> => {
 	return {
 		total: 12,
 		rows: [
@@ -26,7 +26,7 @@ export const queryActiveTickets = async (query: QueryRequest): Promise<TicketsRe
 		],
 	}
 	// const result = await axios.get("/api/tickets", {
-	// 	params: { page: query.page, page_size: query.page_size, active: true },
+	// 	params: { page: query.page, page_size: query.page_size, active: false },
 	// })
 	// return result.data
 }

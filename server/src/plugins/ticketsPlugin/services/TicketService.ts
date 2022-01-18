@@ -18,7 +18,7 @@ class Service {
 		discount?: Discount
 	) {
 		const calculatedPrice = discount
-			? (ticketType.Price * discount.Percentage) / 100
+			? (ticketType.Price * ((100 - discount.Percentage) / 100))
 			: ticketType.Price
 
 		let estimatedStartDate: Date | null = null
