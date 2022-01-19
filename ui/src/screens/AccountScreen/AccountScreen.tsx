@@ -10,11 +10,12 @@ import {
 import { useAuth } from "contexts/AuthContext/hooks"
 import React from "react"
 import { Link, matchPath, Navigate, Route, Routes, useLocation } from "react-router-dom"
-import { HISTORICAL_TICKETS, HOME } from "urls"
+import { FINES, HISTORICAL_TICKETS, HOME } from "urls"
 import Tickets from "./views/Tickets"
 import { MENU_ITEMS } from "./menuitems"
 import * as S from "./styles"
 import HistoricalTickets from "./views/HistoricalTickets"
+import Fines from "./views/Fines"
 
 function AccountScreen() {
 	const auth = useAuth()
@@ -52,6 +53,7 @@ function AccountScreen() {
 				<Routes>
 					<Route index element={<Tickets />} />
 					<Route path={HISTORICAL_TICKETS} element={<HistoricalTickets />} />
+					<Route path={FINES} element={<Fines />} />
 				</Routes>
 			</Grid>
 		</Grid>
