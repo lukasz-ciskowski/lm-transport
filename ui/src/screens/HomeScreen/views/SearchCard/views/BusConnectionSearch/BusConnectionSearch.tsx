@@ -40,7 +40,16 @@ function BusConnectionSearch({ busStops }: Props) {
 		if (interval.current) clearInterval(interval.current)
 	}, [])
 
-	const [fromBusStopId, toBusStopId, date] = watch(["fromBusStopId", "toBusStopId", "date"])
+	const [fromBusStopId, toBusStopId, date, time] = watch([
+		"fromBusStopId",
+		"toBusStopId",
+		"date",
+		"time",
+	])
+	const dateAndTime = moment(date)
+		.hours(time.getHours())
+		.minutes(time.getMinutes())
+		.startOf("minute")
 	const selectedBusStopFrom = busStops.find((busStop) => busStop.id === fromBusStopId)
 	return (
 		<>
@@ -141,7 +150,7 @@ function BusConnectionSearch({ busStops }: Props) {
 						<LinesResult
 							arrivals={data.connections}
 							busStop={selectedBusStopFrom}
-							date={date}
+							date={dateAndTime.toDate()}
 						/>
 					</>
 				)}

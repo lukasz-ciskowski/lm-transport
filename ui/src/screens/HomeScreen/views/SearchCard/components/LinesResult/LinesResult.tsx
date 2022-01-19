@@ -1,10 +1,13 @@
-import { Grid, IconButton, Typography } from "@mui/material"
+import { Grid, IconButton, Tooltip, Typography } from "@mui/material"
 import BusLineBox from "components/BusLineBox"
 import { ConfirmationNumber, ArrowRightAlt } from "@mui/icons-material"
 import * as S from "./styles"
 import moment from "moment"
 import { BusStop } from "models/busStop"
 import { SingleArrival } from "models/arrival"
+import { useState } from "react"
+import BuyTicketModal from "screens/AccountScreen/components/BuyTicketModal"
+import { useGlobalData } from "contexts/GlobalContext/hooks"
 
 interface Props {
 	arrivals: SingleArrival[]
@@ -14,12 +17,32 @@ interface Props {
 
 const TOP_N = 3
 function LinesResult({ arrivals, busStop, date }: Props) {
+	const [modalOpened, setModalOpened] = useState<false | SingleArrival>(false)
+
+	const handleOpenModal = (arrival: SingleArrival) => () => setModalOpened(arrival)
+	const handleCloseModal = () => setModalOpened(false)
+	const globalState = useGlobalData()
+
+	const ticketForSingleRun = globalState.ticketTypes.find((t) => !t.static_duration)
+
+	console.log(date);
+	
 	return (
 		<>
+			{modalOpened && (
+				<BuyTicketModal
+					onClose={handleCloseModal}
+					initialState={{
+						bus_line: modalOpened.route_run.bus_line.id,
+						ticket_type: ticketForSingleRun?.id,
+						start_date: date,
+						start_time: date,
+					}}
+				/>
+			)}
 			{arrivals
 				.map((arrival) => {
 					const time = moment(arrival.arrival_time, "hh:mm")
-
 					return {
 						...arrival,
 						interval: moment
@@ -52,12 +75,16 @@ function LinesResult({ arrivals, busStop, date }: Props) {
 						</Grid>
 						<Grid item xs={4} container justifyContent="flex-end" alignItems="center">
 							<Typography variant="subtitle1">
-								<S.DurationOutput>{moment.duration(arrival.interval).humanize(true)}</S.DurationOutput>
+								<S.DurationOutput>
+									{moment.duration(arrival.interval).humanize(true)}
+								</S.DurationOutput>
 							</Typography>
 							<S.TicketButton>
-								<IconButton>
-									<ConfirmationNumber color="primary" />
-								</IconButton>
+								<Tooltip title="Zakup bilet">
+									<IconButton onClick={handleOpenModal(arrival)}>
+										<ConfirmationNumber color="primary" />
+									</IconButton>
+								</Tooltip>
 							</S.TicketButton>
 						</Grid>
 					</Grid>

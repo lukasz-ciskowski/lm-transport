@@ -1,6 +1,6 @@
 import { ShoppingCart } from "@mui/icons-material"
 import { Button, CircularProgress, Grid, Pagination, Typography } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useMutation, useQuery } from "react-query"
 import BuyTicketModal from "screens/AccountScreen/components/BuyTicketModal"
 import SingleTicket from "screens/AccountScreen/components/SingleTicket"
@@ -14,18 +14,21 @@ function Tickets() {
 	const [page, setPage] = useState(1)
 	const [modalOpen, setModalOpen] = useState(false)
 
+	const handleFetchData = useCallback(() => mutate({ page, page_size: PAGE_SIZE }), [mutate, page])
+
 	useEffect(() => {
-		mutate({ page, page_size: PAGE_SIZE })
-	}, [mutate, page])
+		handleFetchData()
+	}, [handleFetchData])
 
 	const handleCloseModal = () => setModalOpen(false)
 	const handleOpenModal = () => setModalOpen(true)
 
 	const handleSwitchPage = (_: React.ChangeEvent<unknown>, p: number) => setPage(p)
 
+
 	return (
 		<S.Wrapper>
-			{modalOpen && <BuyTicketModal onClose={handleCloseModal} />}
+			{modalOpen && <BuyTicketModal onClose={handleCloseModal} onRefreshView={handleFetchData} />}
 			<S.Header>
 				<Grid container justifyContent="space-between">
 					<Typography variant="h6">Aktywne bilety</Typography>

@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Button,
 	Card,
 	CardActions,
@@ -19,19 +20,26 @@ import { FormState } from "./types"
 import * as S from "./styles"
 import { DesktopDatePicker, TimePicker } from "@mui/lab"
 import { theme } from "styles/theme"
+import { useMutation } from "react-query"
+import { buyTicket } from "./api"
+import { toast } from "react-toastify"
 
 interface Props {
 	onClose: () => void
+	onRefreshView?: () => void
+	initialState?: Partial<FormState>
 }
 
-function BuyTicketModal({ onClose }: Props) {
-	const { control, watch, formState } = useForm<FormState>({
+function BuyTicketModal({ onClose, onRefreshView, initialState }: Props) {
+	const { control, watch, formState, handleSubmit } = useForm<FormState>({
 		mode: "onChange",
 		defaultValues: {
-			start_date: new Date(),
-			start_time: new Date(),
+			...initialState,
+			start_date: initialState?.start_date || new Date(),
+			start_time: initialState?.start_time || new Date(),
 		},
 	})
+	const { mutate, isLoading, error } = useMutation(buyTicket)
 	const state = useGlobalData()
 
 	const [ticketType, busLine, discount] = watch(["ticket_type", "bus_line", "discount"])
@@ -43,16 +51,29 @@ function BuyTicketModal({ onClose }: Props) {
 		? (selectedTicket?.price ?? 0) * ((100 - selectedDiscount.percentage) / 100)
 		: selectedTicket?.price ?? 0
 
-	console.log(discount)
+	const onSubmit = (form: FormState) => {
+		mutate(form, {
+			onSuccess: () => {
+				toast.success("Zakupiono bilet")
+				if (onRefreshView) onRefreshView()
+				onClose()
+			},
+		})
+	}
 
 	return (
-		<form>
-			<Dialog open={true} onClose={onClose}>
-				<Card>
+		<Dialog open={true} onClose={onClose}>
+			<Card>
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<S.Content>
 						<CardHeader title="Zakup bilet" />
 						<CardContent>
 							<Grid container gap={5}>
+								{error && (
+									<Alert style={{ width: "100%" }} severity="error">
+										Nie udało sie zakupić biletu
+									</Alert>
+								)}
 								<Controller
 									name="ticket_type"
 									control={control}
@@ -125,9 +146,7 @@ function BuyTicketModal({ onClose }: Props) {
 														: field.onChange(undefined)
 												}
 											>
-												<MenuItem value="default">
-													Brak ulgi
-												</MenuItem>
+												<MenuItem value="default">Brak ulgi</MenuItem>
 												{state.discounts.map((element) => (
 													<MenuItem value={element.id}>
 														{element.name}
@@ -196,15 +215,15 @@ function BuyTicketModal({ onClose }: Props) {
 								color="primary"
 								variant="contained"
 								type="submit"
-								disabled={!formState.isValid}
+								disabled={!formState.isValid || isLoading}
 							>
 								Zakup
 							</Button>
 						</CardActions>
 					</S.Content>
-				</Card>
-			</Dialog>
-		</form>
+				</form>
+			</Card>
+		</Dialog>
 	)
 }
 

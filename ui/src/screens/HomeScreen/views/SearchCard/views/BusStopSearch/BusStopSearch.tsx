@@ -40,7 +40,11 @@ function BusStopSearch({ busStops }: Props) {
 		if (interval.current) clearInterval(interval.current)
 	}, [])
 
-	const [busStopId, date] = watch(["busStopId", "date"])
+	const [busStopId, date, time] = watch(["busStopId", "date", "time"])
+	const dateAndTime = moment(date)
+		.hours(time.getHours())
+		.minutes(time.getMinutes())
+		.startOf("minute")
 	const selectedBusStop = busStops.find((busStop) => busStop.id === busStopId)
 	return (
 		<>
@@ -113,18 +117,18 @@ function BusStopSearch({ busStops }: Props) {
 				</Grid>
 			</S.Form>
 			<S.Result>
-				{
-					isLoading && <Grid container xs={12} justifyContent="center">
+				{isLoading && (
+					<Grid container xs={12} justifyContent="center">
 						<CircularProgress />
 					</Grid>
-				}
+				)}
 				{data && selectedBusStop && (
 					<>
 						<Divider />
 						<LinesResult
 							arrivals={data.arrivals}
 							busStop={selectedBusStop}
-							date={date}
+							date={dateAndTime.toDate()}
 						/>
 					</>
 				)}
