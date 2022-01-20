@@ -1,6 +1,6 @@
 {
 	"database": {
-		"server": "localhost",
+		"server": "db",
 		"database": "LM-Transport",
 		"user": "sa",
 		"password": "Password123",
