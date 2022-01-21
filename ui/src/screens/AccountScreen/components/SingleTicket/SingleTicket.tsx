@@ -27,6 +27,8 @@ function SingleTicket({ ticket }: Props) {
 		const start = moment(ticket.start_date)
 		const end = moment(ticket.estimated_end_date)
 
+		console.log(start);
+		
 		if (isSingleTicket) {
 			return {
 				day: start,
@@ -82,8 +84,8 @@ function SingleTicket({ ticket }: Props) {
 									<Typography>
 										<b>
 											{[
-												datesInput.hours[0].format("HH:MM"),
-												datesInput.hours[0].format("HH:MM"),
+												datesInput.hours[0].format("HH:mm"),
+												datesInput.hours[1].format("HH:mm"),
 											].join(" - ")}
 										</b>
 									</Typography>

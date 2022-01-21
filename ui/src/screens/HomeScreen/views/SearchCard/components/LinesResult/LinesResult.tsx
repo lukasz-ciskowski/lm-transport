@@ -8,6 +8,7 @@ import { SingleArrival } from "models/arrival"
 import { useState } from "react"
 import BuyTicketModal from "screens/AccountScreen/components/BuyTicketModal"
 import { useGlobalData } from "contexts/GlobalContext/hooks"
+import { theme } from "styles/theme"
 
 interface Props {
 	arrivals: SingleArrival[]
@@ -25,8 +26,25 @@ function LinesResult({ arrivals, busStop, date }: Props) {
 
 	const ticketForSingleRun = globalState.ticketTypes.find((t) => !t.static_duration)
 
-	console.log(date);
-	
+	const availableArrivals = arrivals
+		.map((arrival) => {
+			const time = moment(arrival.arrival_time, "hh:mm")
+			return {
+				...arrival,
+				interval: moment
+					.duration(
+						moment(date)
+							.hours(time.hours())
+							.minutes(time.minutes())
+							.startOf("minute")
+							.diff(moment())
+					)
+					.as("milliseconds"),
+			}
+		})
+		.sort((a, b) => a.interval - b.interval)
+		.filter((_, index) => index < TOP_N)
+
 	return (
 		<>
 			{modalOpened && (
@@ -40,55 +58,44 @@ function LinesResult({ arrivals, busStop, date }: Props) {
 					}}
 				/>
 			)}
-			{arrivals
-				.map((arrival) => {
-					const time = moment(arrival.arrival_time, "hh:mm")
-					return {
-						...arrival,
-						interval: moment
-							.duration(
-								moment(date)
-									.hours(time.hours())
-									.minutes(time.minutes())
-									.startOf("minute")
-									.diff(moment())
-							)
-							.as("milliseconds"),
-					}
-				})
-				.filter((arrival) => arrival.interval > 0)
-				.sort((a, b) => a.interval - b.interval)
-				.filter((_, index) => index < TOP_N)
-				.map((arrival) => (
-					<Grid container spacing={3} xs={12} alignItems="center">
-						<Grid item xs={1}>
-							<BusLineBox number={arrival.route_run.bus_line.line_number} />
-						</Grid>
-						<Grid item xs={7} container>
-							<Typography variant="subtitle1">
-								<b>{busStop.name}</b>
-							</Typography>
-							<S.EndBusStopWrapper>
-								<ArrowRightAlt />
-								<Typography variant="body2">Do {arrival.last_stop}</Typography>
-							</S.EndBusStopWrapper>
-						</Grid>
-						<Grid item xs={4} container justifyContent="flex-end" alignItems="center">
-							<Typography variant="subtitle1">
-								<S.DurationOutput>
-									{moment.duration(arrival.interval).humanize(true)}
-								</S.DurationOutput>
-							</Typography>
-							<S.TicketButton>
-								<Tooltip title="Zakup bilet">
-									<IconButton onClick={handleOpenModal(arrival)}>
-										<ConfirmationNumber color="primary" />
-									</IconButton>
-								</Tooltip>
-							</S.TicketButton>
-						</Grid>
+			{!availableArrivals.length && (
+				<Typography
+					variant="body2"
+					style={{ padding: theme.spacing(2), color: theme.palette.grey[400] }}
+				>
+					Brak najnowszych odjazdów
+				</Typography>
+			)}
+			{availableArrivals.map((arrival) => (
+				<Grid container spacing={3} xs={12} alignItems="center">
+					<Grid item xs={1}>
+						<BusLineBox number={arrival.route_run.bus_line.line_number} />
 					</Grid>
-				))}
+					<Grid item xs={7} container>
+						<Typography variant="subtitle1">
+							<b>{busStop.name}</b>
+						</Typography>
+						<S.EndBusStopWrapper>
+							<ArrowRightAlt />
+							<Typography variant="body2">Do {arrival.last_stop}</Typography>
+						</S.EndBusStopWrapper>
+					</Grid>
+					<Grid item xs={4} container justifyContent="flex-end" alignItems="center">
+						<Typography variant="subtitle1">
+							<S.DurationOutput>
+								{moment.duration(arrival.interval).humanize(true)}
+							</S.DurationOutput>
+						</Typography>
+						<S.TicketButton>
+							<Tooltip title="Zakup bilet">
+								<IconButton onClick={handleOpenModal(arrival)}>
+									<ConfirmationNumber color="primary" />
+								</IconButton>
+							</Tooltip>
+						</S.TicketButton>
+					</Grid>
+				</Grid>
+			))}
 		</>
 	)
 }

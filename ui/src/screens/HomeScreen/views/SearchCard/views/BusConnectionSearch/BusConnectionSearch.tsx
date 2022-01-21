@@ -7,15 +7,12 @@ import { findConnections } from "./api"
 import * as S from "./styles"
 import LinesResult from "../../components/LinesResult"
 import moment from "moment"
-import { useEffect, useRef } from "react"
 import { BusConnectionForm } from "./types"
 import { BusStop } from "models/busStop"
 
 interface Props {
 	busStops: BusStop[]
 }
-
-const REQUEST_INTERVAL = moment.duration({ minutes: 1 }).as("milliseconds")
 
 function BusConnectionSearch({ busStops }: Props) {
 	const { control, handleSubmit, formState, watch } = useForm<BusConnectionForm>({
@@ -26,19 +23,10 @@ function BusConnectionSearch({ busStops }: Props) {
 		},
 	})
 	const { data, mutate, isLoading } = useMutation(findConnections)
-	const interval = useRef<NodeJS.Timer>()
 
 	const onSubmit = (data: BusConnectionForm) => {
-		if (interval.current) clearInterval(interval.current)
-		interval.current = setInterval(() => {
-			mutate(data)
-		}, REQUEST_INTERVAL)
 		mutate(data)
 	}
-
-	useEffect(() => {
-		if (interval.current) clearInterval(interval.current)
-	}, [])
 
 	const [fromBusStopId, toBusStopId, date, time] = watch([
 		"fromBusStopId",

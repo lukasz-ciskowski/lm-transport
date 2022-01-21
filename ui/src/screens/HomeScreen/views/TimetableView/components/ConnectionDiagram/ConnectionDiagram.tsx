@@ -6,33 +6,34 @@ import { BUS_STOP, TIMETABLE } from "urls"
 import * as S from "./styles"
 
 interface Props {
-	route: [Directions.Forward | Directions.Backwards, Array<Pick<BusStop, "id" | "name">>]
+	route: Array<Pick<BusStop, "id" | "name">>
+	direction: Directions.Forward | Directions.Backwards
 	busLineId: string
 	selectedBusStop?: number | undefined
 }
 
-function ConnectionDiagram({ route, busLineId, selectedBusStop }: Props) {
+function ConnectionDiagram({ route, busLineId, selectedBusStop, direction }: Props) {
 	const selectedIndex = selectedBusStop
-		? route[1].findIndex((stop) => stop.id === selectedBusStop)
+		? route.findIndex((stop) => stop.id === selectedBusStop)
 		: undefined
 	return (
 		<>
-			{route[1].map((stop, index) => {
+			{route.map((stop, index) => {
 				return (
 					<S.ConnectionsBox>
-						<S.ConnectionImg index={index} totalSize={route[1].length} />
+						<S.ConnectionImg index={index} totalSize={route.length} />
 						<Link
 							to={{
 								pathname: generatePath(`${TIMETABLE}/${BUS_STOP}`, {
 									bus_line: busLineId,
 									bus_stop: stop.id.toString(),
 								}),
-								search: qs.stringify({ direction: route[0] }),
+								search: qs.stringify({ direction: direction }),
 							}}
 						>
 							<S.ConnectionText
 								index={index}
-								totalSize={route[1].length}
+								totalSize={route.length}
 								selectedIndex={selectedIndex}
 							>
 								{stop.name}

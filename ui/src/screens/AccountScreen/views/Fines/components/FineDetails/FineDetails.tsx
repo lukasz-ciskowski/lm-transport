@@ -18,9 +18,10 @@ import { useState } from "react"
 interface Props {
 	onClose: () => void
 	id: number
+	onResetData: () => void
 }
 
-function FineDetails({ onClose, id }: Props) {
+function FineDetails({ onClose, id, onResetData }: Props) {
 	const { data } = useQuery("single-fine", retrieveFine(id))
 	const [isResolved, setIsResolved] = useState<boolean | undefined>(undefined)
 	const { mutate, isLoading } = useMutation(payFine)
@@ -29,6 +30,7 @@ function FineDetails({ onClose, id }: Props) {
 		mutate(id, {
 			onSuccess: () => {
 				setIsResolved(true)
+				onResetData()
 			},
 		})
 
@@ -57,9 +59,17 @@ function FineDetails({ onClose, id }: Props) {
 								<Grid item xs={8}>
 									<Typography variant="body1">
 										<Chip
-											label={isResolved ?? data.fine.is_paid ? "Opłacony" : "Do opłacenia"}
+											label={
+												isResolved ?? data.fine.is_paid
+													? "Opłacony"
+													: "Do opłacenia"
+											}
 											variant="filled"
-											color={isResolved ?? data.fine.is_paid ? "default" : "error"}
+											color={
+												isResolved ?? data.fine.is_paid
+													? "default"
+													: "error"
+											}
 										/>
 									</Typography>
 								</Grid>
@@ -83,9 +93,15 @@ function FineDetails({ onClose, id }: Props) {
 									</Typography>
 								</Grid>
 							</Grid>
-							<Button variant="contained" disabled={isLoading} onClick={handlePay}>
-								Opłać
-							</Button>
+							{!isResolved && (
+								<Button
+									variant="contained"
+									disabled={isLoading}
+									onClick={handlePay}
+								>
+									Opłać
+								</Button>
+							)}
 						</Grid>
 					</CardContent>
 					<CardActions style={{ justifyContent: "flex-end" }}>

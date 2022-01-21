@@ -6,7 +6,6 @@ import { useMutation } from "react-query"
 import { findArrivals } from "./api"
 import * as S from "./styles"
 import moment from "moment"
-import { useEffect, useRef } from "react"
 import { BusStopSearchForm } from "./types"
 import { BusStop } from "models/busStop"
 import LinesResult from "../../components/LinesResult"
@@ -14,8 +13,6 @@ import LinesResult from "../../components/LinesResult"
 interface Props {
 	busStops: BusStop[]
 }
-
-const REQUEST_INTERVAL = moment.duration({ minutes: 1 }).as("milliseconds")
 
 function BusStopSearch({ busStops }: Props) {
 	const { control, handleSubmit, formState, watch } = useForm<BusStopSearchForm>({
@@ -26,19 +23,10 @@ function BusStopSearch({ busStops }: Props) {
 		},
 	})
 	const { data, mutate, isLoading } = useMutation(findArrivals)
-	const interval = useRef<NodeJS.Timer>()
 
 	const onSubmit = (data: BusStopSearchForm) => {
-		if (interval.current) clearInterval(interval.current)
-		interval.current = setInterval(() => {
-			mutate(data)
-		}, REQUEST_INTERVAL)
 		mutate(data)
 	}
-
-	useEffect(() => {
-		if (interval.current) clearInterval(interval.current)
-	}, [])
 
 	const [busStopId, date, time] = watch(["busStopId", "date", "time"])
 	const dateAndTime = moment(date)

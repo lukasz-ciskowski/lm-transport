@@ -9,23 +9,15 @@ import { TicketService } from "../services/TicketService"
 import { TicketTypeService } from "../services/TicketTypeService"
 
 module RequestSchemas {
-	export const SingleTicketRequestBody = Type.Object({
-		bus_line: Type.Number(),
-		start_date: Type.String({ format: "date-time" }),
-		ticket_type: Type.Number(),
-		discount: Type.Optional(Type.Number()),
-	})
-
-	export const SeasonTIcketRequestBody = Type.Object({
+	export const RequestBody = Type.Object({
+		bus_line: Type.Optional(Type.Number()),
 		start_date: Type.String({ format: "date-time" }),
 		ticket_type: Type.Number(),
 		discount: Type.Optional(Type.Number()),
 	})
 }
 
-export type Body =
-	| Static<typeof RequestSchemas.SingleTicketRequestBody>
-	| Static<typeof RequestSchemas.SeasonTIcketRequestBody>
+export type Body = Static<typeof RequestSchemas.RequestBody>
 
 interface Request {
 	Body: Body
@@ -34,9 +26,7 @@ interface Request {
 export const ROUTE_OPTIONS: RequestRouteOptions<Request> = {
 	schema: {
 		tags: ["tickets"],
-		body: {
-			oneOf: [RequestSchemas.SingleTicketRequestBody, RequestSchemas.SeasonTIcketRequestBody],
-		},
+		body: RequestSchemas.RequestBody,
 		response: {
 			201: Type.Object({ ok: Type.Boolean() }),
 		},

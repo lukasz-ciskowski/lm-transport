@@ -9,12 +9,14 @@ class Repository extends BaseRepository {
             INSERT INTO Tickets
             OUTPUT inserted.Id
             VALUES (
-                ${body.Passenger.Id}, ${body.BusLine?.Id ?? null}, ${body.StartDate},
-                ${body.EstimatedEndDate}, ${body.CalculatedPrice}, ${body.BoughtAt},
-                ${body.TicketType.Id}, ${body.Discount?.Id ?? null}
+				${body.Passenger.Id}, ${body.StartDate},
+				${body.EstimatedEndDate}, ${body.CalculatedPrice},
+				${body.TicketType.Id}, ${body.BusLine?.Id ?? null}, 
+				${body.Discount?.Id ?? null}, ${body.BoughtAt}
             )
         `
 
+		
 		return { id: result.recordset[0].Id }
 	}
 
@@ -63,7 +65,7 @@ class Repository extends BaseRepository {
 		const result = await this.db.query`SELECT 
 			T.Id, T.StartDate, T.EstimatedEndDate, T.BoughtAt, T.CalculatedPrice,
 			BL.Id as 'BusLine.Id', BL.LineNumber as 'BusLine.LineNumber',
-			TT.Id as 'TicketType.Id', TT.Name as 'TicketType.Name', TT.Price as 'TicketType.Price', TT.Length as 'TicketType.Length',
+			TT.Id as 'TicketType.Id', TT.Name as 'TicketType.Name', TT.Price as 'TicketType.Price',
 			T.PassengerId as 'PassengerId',
 			D.Id as 'Discount.Id', D.Name as 'Discount.Name', D.Percentage as 'Discount.Percentage'
 			FROM Tickets as T

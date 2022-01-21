@@ -163,7 +163,7 @@ class Repository extends BaseRepository {
 				) v
 			WHERE seqnum_asc = 1 OR seqnum_desc = 1
 			GROUP BY v.Id
-			ORDER BY Length DESC
+			ORDER BY Minutes DESC
 		`
 
 		return { minutes: result.recordset[0].Minutes }

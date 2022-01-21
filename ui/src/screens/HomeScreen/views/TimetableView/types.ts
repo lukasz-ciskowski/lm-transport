@@ -1,11 +1,11 @@
 import { Directions } from "common/Directions"
-import { BusStop } from "models/busStop";
+import { BusStop } from "models/busStop"
 
 export interface RouteSchemasResponse {
-	routes: [
-		[Directions.Forward, Array<Pick<BusStop, "id" | "name">>],
-		[Directions.Backwards, Array<Pick<BusStop, "id" | "name">>]
-	]
+	routes: {
+		[Directions.Forward]: Array<Pick<BusStop, "id" | "name">>
+		[Directions.Backwards]: Array<Pick<BusStop, "id" | "name">>
+	}
 }
 
 export interface TimetableBaseProps {

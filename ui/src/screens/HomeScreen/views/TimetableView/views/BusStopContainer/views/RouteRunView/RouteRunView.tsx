@@ -103,7 +103,9 @@ function RouteRunView({ initializing, schemas, busStop }: Props) {
 									columnGap={4}
 								>
 									<Typography variant="body1">
-										<b>{arrival.arrival_time}</b>
+										<b>
+											{moment(arrival.arrival_time, "HH:mm").format("HH:mm")}
+										</b>
 									</Typography>
 									{i > indexStartingPoint && (
 										<Typography variant="body2">

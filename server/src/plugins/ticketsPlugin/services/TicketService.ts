@@ -38,7 +38,7 @@ class Service {
 		}
 
 		if (!estimatedStartDate || !estimatedEndDate) throw internal("Date parsing error")
-
+		
 		const { id } = await TicketRepository.createTicket({
 			StartDate: estimatedStartDate.toISOString(),
 			EstimatedEndDate: estimatedEndDate.toISOString(),

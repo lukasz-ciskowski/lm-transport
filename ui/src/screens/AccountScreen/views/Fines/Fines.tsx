@@ -20,16 +20,19 @@ import FineDetails from "./components/FineDetails"
 function Fines() {
 	const [modalOpen, setModalOpen] = useState<false | number>(false)
 	const { mutate, data } = useMutation(getFines)
+
 	useEffect(() => {
-		mutate(undefined)
+		mutate()
 	}, [mutate])
 
 	const handleCloseModal = () => setModalOpen(false)
 	const handleOpenModal = (id: number) => () => setModalOpen(id)
 
+	const handleResetData = () => mutate()
+
 	return (
 		<>
-			{modalOpen && <FineDetails id={modalOpen} onClose={handleCloseModal} />}
+			{modalOpen && <FineDetails id={modalOpen} onClose={handleCloseModal} onResetData={handleResetData} />}
 			<Typography variant="h6">Mandaty</Typography>
 			<TableContainer component={Paper}>
 				<Table sx={{ minWidth: 650 }} aria-label="simple table">

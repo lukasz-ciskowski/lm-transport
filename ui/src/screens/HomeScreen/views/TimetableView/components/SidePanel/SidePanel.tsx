@@ -16,7 +16,9 @@ function SidePanel({ schemas, prevRoute }: Props) {
 	const query = useRouterQuery()
 
 	const direction = (query.get("direction") as Directions | null) || Directions.Forward
-	const selectedRoute = schemas?.routes.find(([dir]) => dir === Number(direction))
+	const selectedRoute = Object.entries(schemas?.routes || {}).find(
+		([dir]) => dir === direction.toString()
+	)
 
 	if (!selectedRoute || !bus_line) return <></>
 
@@ -44,7 +46,8 @@ function SidePanel({ schemas, prevRoute }: Props) {
 			</S.HeaderBox>
 			<ConnectionDiagram
 				busLineId={bus_line}
-				route={selectedRoute}
+				route={selectedRoute[1]}
+				direction={selectedRoute[0] as unknown as Directions}
 				selectedBusStop={bus_stop ? Number(bus_stop) : undefined}
 			/>
 		</S.SidePanelContainer>

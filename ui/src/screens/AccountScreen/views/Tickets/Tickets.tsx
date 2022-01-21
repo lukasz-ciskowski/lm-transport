@@ -1,7 +1,7 @@
 import { ShoppingCart } from "@mui/icons-material"
 import { Button, CircularProgress, Grid, Pagination, Typography } from "@mui/material"
 import React, { useCallback, useEffect, useState } from "react"
-import { useMutation, useQuery } from "react-query"
+import { useMutation } from "react-query"
 import BuyTicketModal from "screens/AccountScreen/components/BuyTicketModal"
 import SingleTicket from "screens/AccountScreen/components/SingleTicket"
 import { queryActiveTickets } from "./api"
