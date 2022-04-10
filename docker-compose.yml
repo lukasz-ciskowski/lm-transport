@@ -30,7 +30,7 @@ services:
       context: "./ui"
       dockerfile: Dockerfile
     volumes:
-      - ".:/home/node/ui"
+      - "./ui:/home/node/ui"
       - /home/node/ui/node_modules
     ports:
       - 3000:3000

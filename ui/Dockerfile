@@ -4,9 +4,9 @@ RUN npm install -g nodemon
 
 USER node
 
-RUN mkdir -p /home/node/server
+RUN mkdir -p /home/node/ui
 
-WORKDIR /home/node/server
+WORKDIR /home/node/ui
 
 COPY package*.json ./
 
