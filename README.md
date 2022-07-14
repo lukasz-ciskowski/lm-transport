@@ -5,6 +5,11 @@ _This is a university project which had specific requirement of using mssql data
 
 ## Setup
 
+To run the application you at first need any **SQL server** running.
+To setup a database run:
+
+    sql/migration.sql
+
 In order to run the application in developer mode you need to have docker installed in your system.
 In the root directory you need to insert in your console:
 
